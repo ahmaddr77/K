@@ -1,0 +1,23 @@
+{
+  "name": "MED26 - التطبيق التعليمي",
+  "short_name": "MED26",
+  "description": "تطبيق MED26 التعليمي للمحتوى الطبي التفاعلي.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F8F9FA",
+  "theme_color": "#4A90E2",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "https://i.imgur.com/8pP1bS6.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.imgur.com/8pP1bS6.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
