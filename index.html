@@ -1,0 +1,3185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>MED26 - التطبيق التعليمي</title>
+  
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4A90E2" />
+  <!-- تم تغيير الأيقونة لأيقونة طبية حديثة وجذابة -->
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- إضافة مكتبة تيليجرام للـ Mini App -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <style>
+    /* Enhanced Protection Styles: Disable selection, copying, and printing */
+    body {
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none;    /* Firefox */
+      -ms-user-select: none;     /* IE10+/Edge */
+      user-select: none;         /* Standard */
+      -webkit-touch-callout: none; /* Disable callouts on iOS */
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Enhanced protection against text selection and copying */
+    * {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    /* Allow minimal text selection only in specific elements if needed */
+    .question-text, .idea-content-box, .rendered-content {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+    
+    /* Disable image interaction completely per request */
+    img, video, iframe {
+      -webkit-user-drag: none;
+      -khtml-user-drag: none;
+      -moz-user-drag: none;
+      -o-user-drag: none;
+      user-drag: none;
+      pointer-events: none; /* Disables click, long-press, context menu */
+      -webkit-touch-callout: none !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+    }
+    
+    @media print {
+      body * {
+        display: none !important;
+      }
+      body::before {
+        content: "الطباعة معطلة لهذا المحتوى.";
+        display: block;
+        text-align: center;
+        font-size: 24px;
+        padding: 50px;
+        color: black;
+      }
+    }
+
+    /* ========== الافتتاحية الطبية (المطورة باحترافية عالية) ========== */
+    :root {
+      --med-primary: #1A73E8;
+      --med-secondary: #00D4AA;
+      --med-glow: #00E676;
+      --num-gold: #FFA000;
+      --num-gold-glow: #FFD54F;
+      --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      
+      /* إضافات التحكم بالنصوص */
+      --text-scale: 1;
+    }
+    
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #ffffff 0%, #ebf4ff 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      overflow: hidden;
+      transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    }
+
+    /* الخلفية والأيقونات الطبية العائمة - حركة انسيابية */
+    .medical-bg-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .med-svg {
+      position: absolute;
+      fill: var(--med-primary);
+      filter: drop-shadow(0 2px 4px rgba(26, 115, 232, 0.2));
+      animation: floatMedSvg 10s ease-in-out infinite;
+    }
+
+    .svg-1 { top: 12%; left: 8%; width: 55px; height: 55px; animation-delay: 0s; fill: var(--med-secondary); }
+    .svg-2 { top: 65%; right: 8%; width: 65px; height: 65px; animation-delay: -3s; fill: #FF6B6B; }
+    .svg-3 { bottom: 10%; left: 15%; width: 45px; height: 45px; animation-delay: -5s; fill: var(--med-primary); }
+    .svg-4 { top: 20%; right: 15%; width: 60px; height: 60px; animation-delay: -2s; fill: var(--med-secondary); }
+    .svg-5 { bottom: 40%; left: 50%; width: 40px; height: 40px; animation-delay: -7s; fill: var(--num-gold); opacity: 0.5; }
+
+    @keyframes floatMedSvg {
+      0% { transform: translateY(0) rotate(0deg) scale(1); }
+      33% { transform: translateY(-15px) rotate(5deg) scale(1.05); }
+      66% { transform: translateY(10px) rotate(-5deg) scale(0.95); }
+      100% { transform: translateY(0) rotate(0deg) scale(1); }
+    }
+    
+    .splash-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      z-index: 2;
+    }
+    
+    /* لوجو كونتينر */
+    .logo-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    
+    .number-wrapper {
+      perspective: 1000px;
+      z-index: 15;
+      position: relative;
+    }
+
+    /* تحسين الرقم 26: مظهر زجاجي بسيط وحركة دخول فخمة */
+    /* تم التعديل: إزالة القيمة السالبة من الهامش العلوي لمنع اقتصاص الرقم */
+    .letter-number {
+      font-size: 7rem;
+      font-weight: 900;
+      color: transparent;
+      background: linear-gradient(135deg, var(--num-gold) 20%, #FFE082 50%, var(--num-gold) 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      font-family: 'Tajawal', sans-serif;
+      line-height: 1.1; /* زيادة المسافة */
+      margin-top: 10px; /* تم تعديله من -15px لضمان ظهوره بالكامل */
+      opacity: 0;
+      transform: scale(0.5) translateY(50px);
+      filter: blur(10px);
+      animation: eleganceEntrance 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s forwards,
+                 numberSheen 4s infinite linear 2s;
+    }
+    
+    .letters-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+      margin-bottom: 5px; /* تم التعديل ليتناسب مع وجوده بالأعلى */
+    }
+    
+    .letter {
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--med-primary);
+      opacity: 0;
+      transform: translateY(40px);
+      font-family: 'Amiri', serif;
+      margin: 0 4px;
+      position: relative;
+    }
+    
+    /* حركة ظهور الأحرف متتابعة */
+    .letter.M { animation: letterRiseSmooth 0.8s ease-out 0.6s forwards; }
+    .letter.E { animation: letterRiseSmooth 0.8s ease-out 0.8s forwards; }
+    .letter.D { animation: letterRiseSmooth 0.8s ease-out 1.0s forwards; }
+
+    .subtitle-text {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 1.1rem;
+        color: var(--text-subtle);
+        margin-top: 15px;
+        opacity: 0;
+        animation: fadeInText 1s ease-out 1.5s forwards;
+    }
+    
+    .loading-bar {
+      position: absolute;
+      bottom: 15%;
+      width: 180px;
+      height: 4px;
+      background-color: rgba(26, 115, 232, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .loading-progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--med-primary), var(--med-secondary));
+      border-radius: 4px;
+      animation: loadingFill 3.5s ease-in-out forwards;
+      box-shadow: 0 0 10px rgba(26, 115, 232, 0.4);
+    }
+
+    @keyframes eleganceEntrance {
+      0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+        filter: blur(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0px);
+      }
+    }
+    
+    @keyframes letterRiseSmooth {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        text-shadow: 0 5px 15px rgba(26, 115, 232, 0.2);
+      }
+    }
+
+    @keyframes fadeInText {
+        to { opacity: 0.8; }
+    }
+    
+    @keyframes numberSheen {
+        0% { filter: brightness(1); }
+        50% { filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 193, 7, 0.3)); }
+        100% { filter: brightness(1); }
+    }
+    
+    @keyframes loadingFill {
+      0% { width: 0%; }
+      30% { width: 40%; }
+      70% { width: 80%; }
+      100% { width: 100%; }
+    }
+    
+    /* استجابة الشاشات الصغيرة الافتتاحية */
+    @media (max-width: 480px) {
+      .letter-number { font-size: 5.5rem; }
+      .letter { font-size: 3rem; }
+    }
+
+    /* Original Styles */
+    :root{
+      --bg: #F8F9FA;
+      --card: #FFFFFF;
+      --primary: linear-gradient(45deg, #4A90E2 0%, #1A73E8 100%);
+      --primary-solid: #4A90E2;
+      --text: #333333;
+      --text-subtle: #7A8699;
+      --border: #E8EBF0;
+      --success: #28a745;
+      --danger: #E03131;
+      --warning: #FFC107;
+      --warning-dark-text: #B38600;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --screen-padding: 20px;
+      --font-base: 'Amiri', 'Traditional Arabic', serif;
+      --font-primary: 'Amiri', 'Traditional Arabic', serif;
+      --font-content: 'Tajawal', sans-serif;
+    }
+    body.dark-mode {
+        --bg: #121212;
+        --card: #1E1E1E;
+        --text: #E0E0E0;
+        --text-subtle: #A0A0A0;
+        --border: #333333;
+        --shadow-color: rgba(255, 255, 255, 0.08);
+        --warning: #FFD54F;
+        --warning-dark-text: #FFC107;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      height:100%; width:100%; margin:0; padding:0; overflow:hidden;
+      background: var(--bg); color:var(--text);
+      font-family:var(--font-base);
+      transition: background-color 0.3s var(--transition-smooth), color 0.3s var(--transition-smooth);
+    }
+    .app{
+      width:100%; max-width:none !important; height:100vh; margin:0 auto;
+      display:flex; align-items:center; justify-content:center;
+      padding:0 !important;
+      position:relative;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .viewport{width:100%;height:100%;position:relative}
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 25px;
+      text-align: center;
+      font-family: var(--font-primary);
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .screen{
+      display:none;
+      height:100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s var(--transition-smooth), transform 0.3s var(--transition-smooth);
+    }
+    .screen.active{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .card{
+      width:100%; background: var(--card); border-radius: 20px;
+      padding: var(--screen-padding); border: 1px solid var(--border);
+      box-shadow: 0 8px 25px -5px var(--shadow-color), 0 5px 10px -6px var(--shadow-color);
+      max-height:calc(100vh - 40px); overflow:auto; text-align:right;
+      max-width: 420px;
+      position: relative;
+      z-index: 5;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .card::-webkit-scrollbar {width: 0px !important; background: transparent !important;}
+    .card { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .pull-to-refresh-loader {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(-70px);
+        transition: transform 0.3s var(--transition-smooth);
+        z-index: 2;
+        pointer-events: none;
+    }
+    .pull-to-refresh-loader .spinner {
+        width: 30px;
+        height: 30px;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: var(--primary-solid);
+        border-radius: 50%;
+        opacity: 0;
+        transition: opacity 0.3s var(--transition-smooth), transform 0.3s var(--transition-smooth);
+    }
+    .pull-to-refresh-loader.visible {
+        transform: translateY(0);
+    }
+    .pull-to-refresh-loader.refreshing {
+        transform: translateY(0);
+        transition: transform 0.3s var(--transition-smooth);
+    }
+    .pull-to-refresh-loader.visible .spinner {
+        opacity: 1;
+    }
+    .pull-to-refresh-loader.refreshing .spinner {
+        opacity: 1;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    #college-screen.ptr-down .card {
+        transition: transform 0.3s var(--transition-smooth);
+    }
+
+    .choice-frame, .subject-choice-frame {
+        font-family: var(--font-primary);
+        font-weight: 700 !important;
+        margin: 0; padding: 20px 25px !important; border-radius: 12px; width: 100%;
+        border: 1px solid var(--primary-solid); background: rgba(74, 144, 226, 0.08);
+        color: var(--primary-solid); font-size: 18px; cursor: pointer;
+        transition: all 0.3s var(--transition-smooth); text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 75px;
+        position: relative;
+        overflow: hidden;
+    }
+    .choice-frame::before, .subject-choice-frame::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s var(--transition-smooth);
+    }
+    .choice-frame:hover::before, .subject-choice-frame:hover::before {
+        left: 100%;
+    }
+    .choice-frame:hover { 
+        background: rgba(74, 144, 226, 0.15); 
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    }
+    #fav-category-btn {
+        margin-top: 15px;
+    }
+    #fav-category-btn .fav-star-wrapper {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 1;
+        margin: 0 2px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    #fav-category-btn .fav-star-wrapper::before {
+        content: '˙';
+        position: absolute;
+        top: -0.7em;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        color: var(--primary-solid);
+        transition: all 0.3s var(--transition-smooth);
+    }
+    #fav-category-btn .fav-star {
+        color: #FFD700;
+        font-size: 1.1em;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .subject-item-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .subject-choice-frame {
+        flex-grow: 1;
+        text-align: right;
+        justify-content: flex-start;
+        padding: 20px 15px !important;
+    }
+    .stats-btn {
+        width: 45px;
+        height: 75px;
+        border-radius: 12px;
+        background-color: var(--primary-solid);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s var(--transition-smooth);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .stats-btn:hover { 
+        background-color: #1A73E8; 
+        transform: scale(1.05);
+    }
+    .stats-btn svg {
+        width: 24px;
+        height: 24px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+
+    /* Style for the Studied Toggle Button */
+    .studied-toggle-btn {
+        background-color: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-subtle);
+    }
+    .studied-toggle-btn.is-studied {
+        background-color: var(--success);
+        border-color: var(--success);
+        color: #fff;
+    }
+    .studied-toggle-btn.is-studied svg {
+        stroke: #fff;
+    }
+    .studied-toggle-btn svg {
+        stroke: var(--text-subtle);
+        width: 24px;
+        height: 24px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    button.btn {
+        width: 100%; padding: 15px; border-radius: 12px; margin-bottom: 15px;
+        font-size: 16px; font-weight: 700; cursor: pointer; border: none;
+        transition: all 0.3s var(--transition-smooth);
+        font-family: var(--font-primary);
+        position: relative;
+        overflow: hidden;
+    }
+    .btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%);
+        transform-origin: 50% 50%;
+    }
+    .btn:focus:not(:active)::after {
+        animation: ripple 1s ease-out;
+    }
+    @keyframes ripple {
+        0% {
+            transform: scale(0, 0);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(20, 20);
+            opacity: 0;
+        }
+    }
+    .btn-primary { background: var(--primary-solid); color: #fff; }
+    .btn-primary:hover { 
+        background: #1A73E8; 
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+    }
+    .btn-secondary { background: var(--bg); color: var(--primary-solid); border: 1px solid var(--primary-solid); }
+    .btn-secondary:hover { 
+        background: rgba(74, 144, 226, 0.08); 
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    }
+    #year-choice-modal .list button {
+        font-family: var(--font-primary) !important;
+        font-weight: 700 !important;
+    }
+    body.question-mode-active #question-screen {align-items: flex-start; justify-content: flex-start;}
+    body.question-mode-active #question-screen .card {
+      padding: 0 !important;
+      max-height: 100vh !important; overflow-y: auto; border-radius: 0 !important;
+      border: none !important; box-shadow: none !important;
+      background: var(--bg); width: 100%; max-width: none !important; height: 100%;
+      z-index: 1;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .question-wrapper{
+      margin-bottom: var(--screen-padding); padding: var(--screen-padding);
+      background: var(--card); border-radius: 15px; border: 1px solid var(--border);
+      box-shadow: 0 4px 10px -2px var(--shadow-color);
+      margin-left: auto; margin-right: auto; max-width: 600px; width: 100%;
+      position: relative;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .question-wrapper:first-child {margin-top: var(--screen-padding);}
+    .question-text {
+        font-size: calc(17px * var(--text-scale, 1));
+        line-height: 1.6; font-weight: 700; color: var(--text);
+        margin-bottom: 0; word-wrap: break-word; overflow-wrap: break-word;
+        font-family: var(--font-content);
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .answers {display: flex; flex-direction: column; gap: 12px; margin-top: 20px;}
+    .answers button{
+      margin: 0; padding:20px 25px !important; border-radius:12px; width:100%;
+      border: 1px solid var(--primary-solid);
+      background: rgba(74, 144, 226, 0.08);
+      color: var(--primary-solid);
+      font-size: calc(16px * var(--text-scale, 1)); font-weight:700; cursor:pointer; transition: all 0.3s var(--transition-smooth);
+      text-align: right; height: auto; white-space: pre-wrap;
+      font-family: var(--font-content);
+      position: relative;
+      overflow: hidden;
+    }
+    .answers button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(74, 144, 226, 0.1), transparent);
+        transition: left 0.6s var(--transition-smooth);
+    }
+    .answers button:hover::before {
+        left: 100%;
+    }
+    .answers button:hover{
+        background: rgba(74, 144, 226, 0.15);
+    }
+    .answers button:disabled { opacity: 0.8; cursor: default; }
+    .correct{
+        background: var(--success) !important;
+        color: #fff !important;
+        border-color: var(--success) !important;
+        transform: scale(1.02);
+        transition: all 0.3s var(--transition-bounce);
+    }
+    .wrong{
+        background: var(--danger) !important;
+        color: #fff !important;
+        border-color: var(--danger) !important;
+        transform: scale(1.02);
+        transition: all 0.3s var(--transition-bounce);
+    }
+    .idea-content-box {
+        margin-top: 15px; padding: 15px; background-color: var(--bg);
+        border-radius: 8px; border-right: 4px solid var(--primary-solid);
+        line-height: 1.7; font-size: calc(16px * var(--text-scale, 1)); 
+        color: var(--text);
+        font-family: var(--font-content);
+        font-weight: 700;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .rendered-content {
+        overflow-wrap: break-word; 
+        word-wrap: break-word;     
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .rendered-content img, .rendered-content video { max-width: 100%; border-radius: 8px; margin-top: 10px; transition: all 0.3s var(--transition-smooth); }
+    .rendered-content video { background-color: #000; }
+    .rendered-content iframe { width: 100%; min-height: 300px; border: 1px solid var(--border); border-radius: 8px; margin-top: 10px; transition: all 0.3s var(--transition-smooth); }
+    .rendered-content strong.special-text { color: var(--primary-solid); font-weight: 700; transition: all 0.3s var(--transition-smooth); }
+    .question-actions {
+        display: flex; gap: 10px; margin-top: 15px; padding-top: 15px;
+        border-top: 1px solid var(--primary-solid);
+        justify-content: flex-end; align-items: center;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .question-actions button {
+        height: 44px; border-radius: 10px; cursor: pointer; font-weight: 500;
+        transition: all 0.3s var(--transition-smooth); border: none; display: flex; align-items: center; justify-content: center;
+        padding: 0 15px; flex-shrink: 0;
+        font-family: var(--font-base);
+    }
+    .fav-btn {
+        background: transparent;
+        border: 2px solid var(--primary-solid);
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        transition: all 0.3s var(--transition-bounce);
+        margin-left: 0;
+        color: #FFD700;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .fav-btn:hover {
+        background: rgba(74, 144, 226, 0.08);
+        transform: scale(1.1);
+    }
+    .fav-btn.favorited {
+      background-color: #FFC107;
+      border-color: #FFC107;
+      color: #fff;
+      transform: scale(1.1);
+    }
+    .explain-btn-inline { background: var(--primary-solid); color: #fff; flex-grow: 0; }
+    .explain-btn-inline:hover {
+        transform: scale(1.05);
+    }
+    
+    .note-btn-inline {
+        background: var(--bg);
+        color: var(--text-subtle);
+        border: 1px solid var(--border);
+        flex-grow: 0;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .note-btn-inline:hover {
+        transform: scale(1.05);
+    }
+    .note-btn-inline.has-note {
+        background: var(--warning);
+        color: #fff;
+        border-color: var(--warning);
+        font-weight: 700;
+        transform: scale(1.05);
+    }
+
+    .source-btn-inline {
+        background: rgba(40, 167, 69, 0.1); color: var(--success);
+        border: 1px solid var(--success); font-size: 13px; font-weight: 700;
+        flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; margin-left: auto;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .source-btn-inline:hover {
+        transform: scale(1.02);
+    }
+    
+    #floatingMenuBtn{
+      position:fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index:1500;
+      width: 48px;
+      height: 48px;
+      background: none;
+      border: none;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 0;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    #floatingMenuBtn svg{
+      stroke: var(--primary-solid);
+      width:28px;
+      height:28px;
+      stroke-width:3;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    #floatingMenuBtn:hover {
+        transform: scale(1.1);
+    }
+    #floatingMenu.modal-overlay{z-index:2000}
+    #floatingMenu .modal-content{max-width:300px;padding:20px}
+    #floating-menu-container{display:flex;flex-direction:column;gap:10px}
+    .menu-group-title{color:var(--primary-solid);font-weight:700;font-size:16px;margin-top:15px;margin-bottom:5px;border-bottom:1px solid var(--primary-solid);padding-bottom:5px;text-align:right; font-family: var(--font-primary); transition: all 0.3s var(--transition-smooth);}
+    .menu-icon-btn-group { display: flex; justify-content: space-around; gap: 10px; margin-top: 10px; }
+    
+    /* مخصص لأزرار العرض */
+    #appearance-controls-container { display: none; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; flex-direction: column; gap: 8px;}
+    .menu-row-control { display: flex; justify-content: space-around; gap: 10px; width: 100%; }
+    .toggle-menu-btn { 
+        width: 100%; margin-top: 5px; background: transparent; 
+        color: var(--primary-solid); border: 1px solid var(--primary-solid);
+        font-family: var(--font-primary); font-weight: bold; border-radius: 8px; padding: 8px; cursor: pointer;
+        display: flex; justify-content: center; align-items: center; gap: 8px;
+    }
+    
+    .menu-icon-btn { background: var(--card); border: 1px solid var(--border); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s var(--transition-smooth); }
+    .menu-icon-btn:hover { background: rgba(74, 144, 226, .08); transform: scale(1.1); }
+    .menu-icon-btn svg { width: 24px; height: 24px; stroke: var(--primary-solid); fill: none; stroke-width: 2; transition: all 0.3s var(--transition-smooth); }
+    .menu-large-btn { width: 100%; padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; transition: all 0.3s var(--transition-smooth); background: var(--primary-solid); color: #fff; font-family: var(--font-primary);}
+    .menu-large-btn:hover { background: #1A73E8; transform: translateY(-2px); }
+    .menu-secondary-btn {
+        background: var(--primary-solid);
+        color: #fff;
+        border: none;
+        font-weight: 700;
+        font-size: 15px;
+        padding: 12px;
+        margin: 0;
+        border-radius: 10px;
+        transition: all 0.3s var(--transition-smooth);
+        text-align: center;
+        cursor: pointer;
+        font-family: var(--font-primary);
+    }
+    .menu-secondary-btn:hover { background: #1A73E8; transform: translateY(-2px); }
+    .menu-footer-text { font-size: 12px; color: var(--text-subtle); text-align: center; margin-top: 20px; transition: all 0.3s var(--transition-smooth); }
+    .timer-control-wrapper {
+        display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        background: var(--bg); padding: 8px 12px; border-radius: 10px; margin-top: 5px;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    #timer-display { font-size: 18px; font-weight: 700; color: var(--primary-solid); letter-spacing: 1px; transition: all 0.3s var(--transition-smooth); }
+    #timer-toggle-btn { padding: 8px 15px; font-size: 14px; margin: 0; flex-grow: 1; transition: all 0.3s var(--transition-smooth); }
+    #timer-toggle-btn:hover {
+        transform: translateY(-1px);
+    }
+    #subjectStatsModal .modal-content { max-width: 400px; }
+    .stat-detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--primary-solid);
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .stat-detail-row:last-child { border-bottom: none; }
+    .stat-detail-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary-solid);
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .stats-container{text-align:center}
+    .chart-container{position:relative;width:150px;height:150px;margin:20px auto}
+    .stat-circle{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--primary-solid);background:radial-gradient(var(--card) 60%,transparent 61%),conic-gradient(var(--success) calc(var(--percentage,0)*1%),var(--danger) 0);transition:background .5s var(--transition-smooth)}
+    .stats-details{display:flex;justify-content:space-around;margin-top:25px;font-size:14px}
+    .stat-item{display:flex;flex-direction:column; transition: all 0.3s var(--transition-smooth);}
+    .stat-item span:first-child{font-weight:700;font-size:18px;color:var(--text); transition: all 0.3s var(--transition-smooth);}
+    .stat-item label{color:var(--text-subtle); transition: all 0.3s var(--transition-smooth);}
+    .modal-overlay{
+        display:none;
+        position:fixed;
+        z-index:1000;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        background-color:rgba(0,0,0,.6);
+        backdrop-filter:blur(5px);
+        -webkit-backdrop-filter:blur(5px);
+        justify-content:center;
+        align-items:center;
+        opacity:0;
+        transition:opacity .3s var(--transition-smooth);
+        text-align:right
+    }
+    .modal-overlay.active{
+        display:flex;
+        opacity:1;
+    }
+    .modal-content{
+        background:var(--card);
+        border-radius:20px;
+        padding:25px;
+        width:90%;
+        max-width:380px;
+        box-shadow:0 10px 30px rgba(0,0,0,.2);
+        transform:translateY(20px) scale(0.95);
+        transition:transform .3s var(--transition-smooth), opacity .3s var(--transition-smooth);
+        position:relative;
+        pointer-events:auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    #floatingMenu .modal-content {
+        max-height: none;
+        overflow-y: visible;
+    }
+    .modal-overlay.active .modal-content{
+        transform:translateY(0) scale(1);
+    }
+    .close-btn{
+        position:absolute;
+        top:15px;
+        left:15px;
+        background:none;
+        border:none;
+        font-size:24px;
+        color:var(--text-subtle);
+        cursor:pointer;
+        transition:color .3s var(--transition-smooth), transform .3s var(--transition-smooth);
+    }
+    .close-btn:hover{
+        color:var(--danger);
+        transform: scale(1.1);
+    }
+    #explanation-modal .modal-content{max-width:500px}
+    #modal-explanation-text{line-height:1.6}
+    
+    #note-textarea {
+         width: 100%; 
+         min-height: 150px; 
+         border-radius: 8px; 
+         border: 1px solid var(--border); 
+         background: var(--bg); 
+         color: var(--text); 
+         padding: 10px; 
+         font-family: var(--font-content);
+         resize: vertical;
+         transition: all 0.3s var(--transition-smooth);
+    }
+
+    #toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+    .toast{
+        background:var(--card);
+        color:var(--text);
+        padding:12px 25px;
+        border-radius:10px;
+        box-shadow:0 4px 15px rgba(0,0,0,.2);
+        opacity:0;
+        animation:toast-in .3s var(--transition-smooth) forwards,toast-out .3s var(--transition-smooth) 1.7s forwards;
+        font-weight:500;
+        min-width:200px;
+        text-align:center;
+        border:1px solid var(--border);
+        transform-origin: center top;
+    }
+    .toast.success{background-color:var(--success);color:#fff;border-color:var(--success)}
+    .toast.danger{background-color:var(--danger);color:#fff;border-color:var(--danger)}
+    @keyframes toast-in{from{opacity:0;transform:translateY(-20px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes toast-out{to{opacity:0;transform:translateY(-20px) scale(0.9)}}
+
+    #scroll-indicator-dot {
+        position: fixed;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 40px;
+        background-color: var(--primary-solid);
+        border-radius: 4px;
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s var(--transition-smooth), top 0.1s linear;
+        will-change: top, opacity;
+    }
+    #scroll-indicator-dot.visible {
+        opacity: 1;
+    }
+    
+    .highlight-red, .highlight-green, .highlight-yellow, .highlight-blue {
+        padding: 3px 8px;
+        margin: 0 2px;
+        border-radius: 8px;
+        font-weight: 700;
+        line-height: 1.5;
+        display: inline-block;
+        border: 1px solid transparent;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .highlight-red {
+        background-color: rgba(224, 49, 49, 0.1);
+        color: var(--danger);
+        border-color: rgba(224, 49, 49, 0.2);
+    }
+    .highlight-green {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: var(--success);
+        border-color: rgba(40, 167, 69, 0.2);
+    }
+    .highlight-yellow {
+        background-color: rgba(255, 193, 7, 0.15);
+        color: var(--warning-dark-text);
+        border-color: rgba(255, 193, 7, 0.3);
+    }
+    .highlight-blue {
+        background-color: rgba(74, 144, 226, 0.1);
+        color: var(--primary-solid);
+        border-color: rgba(74, 144, 226, 0.2);
+    }
+
+    .rendered-content .color-green { color: var(--success); transition: all 0.3s var(--transition-smooth); }
+    .rendered-content .color-blue { color: var(--primary-solid); transition: all 0.3s var(--transition-smooth); }
+    .rendered-content .color-red { color: var(--danger); transition: all 0.3s var(--transition-smooth); }
+    .rendered-content .color-orange { color: #FFA500; transition: all 0.3s var(--transition-smooth); }
+    .rendered-content .color-yellow { color: var(--warning-dark-text); transition: all 0.3s var(--transition-smooth); }
+
+    .dropdown-select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid var(--primary-solid);
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-primary);
+        font-size: 16px;
+        margin-bottom: 20px;
+        outline: none;
+        transition: all 0.3s var(--transition-smooth);
+    }
+    .dropdown-select:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: rgba(0,0,0,0.05);
+    }
+    .dropdown-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: var(--primary-solid);
+        font-family: var(--font-primary);
+    }
+
+    /* Font Mode Override */
+    .amiri-font-mode .question-text, 
+    .amiri-font-mode .idea-content-box,
+    .amiri-font-mode .answers button {
+         font-family: var(--font-primary) !important;
+    }
+    
+    /* Ink/Black Color Mode Override */
+    .ink-mode-active .answers button:not(.correct):not(.wrong) {
+         color: #000000 !important;
+         border-color: #000000 !important;
+    }
+    .ink-mode-active .question-text {
+         color: #000000 !important;
+    }
+
+  </style>
+  <script>
+    // --- Enhanced Protection Script ---
+    (function() {
+      document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
+      document.addEventListener('keydown', function(e) {
+        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || 
+            (e.ctrlKey && e.keyCode == 85) || (e.ctrlKey && e.keyCode == 83) || (e.ctrlKey && e.keyCode == 80)) {
+          e.preventDefault(); return false;
+        }
+        if (e.ctrlKey && (e.keyCode == 67 || e.keyCode == 65 || e.keyCode == 88)) {
+           e.preventDefault(); return false;
+        }
+      });
+      const devtools = { open: false }; const threshold = 160;
+      const checkDevTools = () => {
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        const start = performance.now(); console.log(start); console.clear(); const end = performance.now();
+        const timeThreshold = end - start > 100;
+        if ((widthThreshold || heightThreshold || timeThreshold) && !devtools.open) {
+          devtools.open = true; document.body.innerHTML = '';
+          document.body.style.backgroundColor = '#FFFFFF'; document.body.style.display = 'flex';
+          document.body.style.justifyContent = 'center'; document.body.style.alignItems = 'center';
+          document.body.style.fontFamily = 'Arial, sans-serif';
+          document.body.innerHTML = '<h1 style="color: red; text-align: center;">تم اكتشاف محاولة غير مصرح بها للوصول إلى أدوات المطورين</h1>';
+        }
+      };
+      setInterval(checkDevTools, 500);
+      document.addEventListener('copy', function(e) { e.preventDefault(); return false; });
+      document.addEventListener('cut', function(e) { e.preventDefault(); return false; });
+      document.addEventListener('paste', function(e) { e.preventDefault(); return false; });
+      document.addEventListener('dragstart', function(e) { e.preventDefault(); return false; });
+      document.addEventListener('drop', function(e) { e.preventDefault(); return false; });
+      document.addEventListener('selectstart', function(e) { e.preventDefault(); return false; });
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- الافتتاحية المعدلة والمطورة باحترافية للواجهة الطبية -->
+  <div id="splash-screen">
+    
+    <!-- خلفيات أيقونات طبية احترافية عائمة -->
+    <div class="medical-bg-container">
+      <!-- Stethoscope SVG -->
+      <svg viewBox="0 0 24 24" class="med-svg svg-1" xmlns="http://www.w3.org/2000/svg">
+         <path d="M16 3H8C6.34 3 5 4.34 5 6v3.5c0 2.21 1.79 4 4 4s4-1.79 4-4V6h1v6c0 1.66 1.34 3 3 3s3-1.34 3-3V5c0-1.1-.9-2-2-2zM9 9.5C7.9 9.5 7 8.6 7 7.5S7.9 5.5 9 5.5s2 .9 2 2-1.1 2-2 2z" />
+         <circle cx="17" cy="18" r="3" />
+      </svg>
+      <!-- Medical Cross SVG -->
+      <svg viewBox="0 0 24 24" class="med-svg svg-2" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 10.5h-5.5V5h-3v5.5H5v3h5.5V19h3v-5.5H19v-3z"/>
+      </svg>
+      <!-- EKG/Heartbeat Pulse SVG -->
+      <svg viewBox="0 0 24 24" class="med-svg svg-3" xmlns="http://www.w3.org/2000/svg">
+        <path stroke="currentColor" stroke-width="2" fill="none" d="M2 12h4l2.5-6L12 18l3.5-9L18 12h4" />
+      </svg>
+      <!-- DNA Helical Concept SVG -->
+      <svg viewBox="0 0 24 24" class="med-svg svg-4" xmlns="http://www.w3.org/2000/svg">
+         <path fill="currentColor" d="M12 2C8 6 8 10 12 14c4 4 4 8 0 12C16 22 16 18 12 14C8 10 8 6 12 2z"/>
+         <circle cx="12" cy="7" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+      </svg>
+      <!-- Star/Award -->
+      <svg viewBox="0 0 24 24" class="med-svg svg-5" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+    </div>
+
+    <div class="splash-container">
+      
+      <div class="logo-container" dir="ltr">
+        
+        <!-- الحروف أولاً (MED) -->
+        <div class="letters-wrapper">
+          <div class="letter M">M</div>
+          <div class="letter E">E</div>
+          <div class="letter D">D</div>
+        </div>
+
+        <!-- الرقم ثانياً (26) ليظهر في الأسفل -->
+        <div class="number-wrapper">
+           <div class="letter-number">26</div>
+        </div>
+        
+        <div class="subtitle-text"></div>
+      </div>
+      
+      <div class="loading-bar">
+        <div class="loading-progress"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" style="display: none;">
+    <div class="viewport">
+
+      <div id="college-screen" class="screen" data-screen="college-screen">
+          
+          <div class="pull-to-refresh-loader" id="ptr-loader">
+              <div class="spinner"></div>
+          </div>
+
+          <div class="card" id="college-screen-card">
+              <div id="downloaded-content-section" style="display: none;">
+                  <div id="downloadedList" class="list"></div>
+                  <hr style="margin: 25px 0; border: none; border-top: 1px solid var(--primary-solid);">
+              </div>
+
+              <div id="collegesListContainer" style="display:none; margin-top: 25px;">
+                   <!-- Changed from list to dropdowns -->
+                   <div id="selection-form">
+                       <label for="college-select" class="dropdown-label">اختر الكلية</label>
+                       <select id="college-select" class="dropdown-select">
+                           <option value="" disabled selected>...جاري تحميل الكليات</option>
+                       </select>
+
+                       <label for="year-select" class="dropdown-label">اختر السنة</label>
+                       <select id="year-select" class="dropdown-select" disabled>
+                           <option value="" disabled selected>يرجى اختيار الكلية أولاً</option>
+                       </select>
+
+                       <button id="next-step-btn" class="btn btn-primary" disabled style="margin-top: 10px;">استمرار</button>
+                   </div>
+              </div>
+          </div>
+      </div>
+      <div id="year-screen" class="screen" data-screen="year-screen">
+          <div class="card"><h2 id="selected-college-title">اختر سنتك</h2><div id="yearsList" class="list"></div></div>
+      </div>
+
+      <div id="subject-screen" class="screen" data-screen="subject-screen">
+          <div class="card">
+            <h2 id="materials-title">اختر المادة</h2>
+            
+            <div id="subjectsList" class="list"></div>
+          </div>
+      </div>
+      <div id="category-screen" class="screen" data-screen="category-screen">
+          <div class="card">
+            <h2 id="category-title">اختر التصنيف</h2>
+            <div class="list">
+                <button class="choice-frame" data-category="دورات">نماذج</button>
+                <button class="choice-frame" data-category="بنوك">بنوك </button>
+                <button class="choice-frame" data-category="أفكار">أفكار </button>
+                <button id="fav-category-btn" class="choice-frame" data-category="المفضلة">المـ<span class="fav-star-wrapper"><span class="fav-star">⭐</span></span>ـضلة</button>
+            </div>
+          </div>
+      </div>
+
+      <div id="list-view-screen" class="screen" data-screen="list-view-screen">
+        <div class="card">
+            <h2 id="list-view-title" style="display: none;"></h2>
+            <div id="list-view-container" class="list"></div>
+        </div>
+      </div>
+
+      <div id="question-screen" class="screen" data-screen="question-screen">
+        <div class="card" role="region" aria-label="قائمة الأسئلة"><div id="questions-list-container"></div></div>
+      </div>
+
+      <button id="floatingMenuBtn" aria-label="قائمة الخيارات">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+    </div>
+    <div id="scroll-indicator-dot"></div>
+  </div>
+
+  <div id="floatingMenu" class="modal-overlay">
+    <div class="modal-content" role="dialog" aria-modal="true">
+        <button class="close-btn" aria-label="إغلاق" onclick="toggleFloatingMenu(false)">&times;</button>
+        <h3 style="text-align:center;"></h3>
+        <div id="floating-menu-container"></div>
+    </div>
+  </div>
+
+  <div id="year-choice-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="hideModal('year-choice-modal')">&times;</button>
+        <h3 id="year-choice-title"></h3>
+        <div class="list" style="margin-top: 20px;">
+            <button id="full-content-btn" class="btn btn-primary">تنزيل وتصفح المحتوى</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="statsModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="hideModal('statsModal')">&times;</button>
+        <div class="stats-container"><h3></h3><div class="chart-container"><div id="statCircle" class="stat-circle" style="--percentage: 0;"><span id="percentageText">0%</span></div></div><div class="stats-details"><div class="stat-item"><span id="solvedCount">0</span><label>المحلولة</label></div><div class="stat-item"><span id="correctCount">0</span><label>الصحيحة</label></div><div class="stat-item"><span id="wrongCount">0</span><label>الخاطئة</label></div></div></div></div>
+  </div>
+
+  <div id="subjectStatsModal" class="modal-overlay">
+      <div class="modal-content">
+          <button class="close-btn" onclick="hideModal('subjectStatsModal')">&times;</button>
+          <h3 id="subjectStatsTitle">إحصائيات المادة</h3>
+          <div id="subjectStatsDetails" style="margin-top: 20px;">
+              </div>
+      </div>
+  </div>
+
+  <div id="explanation-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="hideModal('explanation-modal')">&times;</button>
+        <h3 id="modal-title"></h3><div id="modal-explanation-text" class="rendered-content"></div></div>
+  </div>
+
+  <div id="note-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-btn" onclick="hideModal('note-modal')">&times;</button>
+      <h3 id="note-modal-title"></h3>
+      <div id="note-modal-content-wrapper" style="margin-top: 15px;">
+        <textarea id="note-textarea"></textarea>
+        <button id="save-note-btn" class="btn btn-primary" style="margin-top: 15px; margin-bottom: 0;">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-note-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-btn" onclick="hideModal('view-note-modal')">&times;</button>
+      <h3 id="view-note-title"></h3>
+      <div id="view-note-text" class="rendered-content" style="line-height: 1.6; margin-top: 15px; margin-bottom: 20px;"></div>
+      <div id="view-note-actions" style="display: flex; gap: 10px; border-top: 1px solid var(--border); padding-top: 15px;">
+        <button id="edit-note-btn" class="btn btn-secondary" style="flex: 1; margin: 0; padding: 10px; font-size: 14px;">تعديل</button>
+        <button id="delete-note-btn" class="btn btn-primary" style="flex: 1; margin: 0; padding: 10px; font-size: 14px; background: var(--danger); border-color: var(--danger);">حذف</button>
+      </div>
+    </div>
+  </div>
+  <div id="codeModal" class="modal-overlay">
+      <div class="modal-content">
+          <button class="close-btn" onclick="closeCodeModal()">&times;</button>
+
+          <div id="code-entry-view">
+              <h3 id="code-entry-title"></h3>
+              <input id="codeInput" placeholder="الكود هنا" style="width:100%; padding:12px; margin-top:10px; border-radius:10px; border:1px solid var(--border); background: var(--bg); color: var(--text); font-family: var(--font-primary); font-weight: 700;" />
+              <div style="display:flex; gap:10px; margin-top:15px;">
+                  <button id="applyCodeBtn" class="btn btn-primary" style="flex:1; margin:0;">تحقق</button>
+                  <button onclick="closeCodeModal()" class="btn btn-secondary" style="flex:1; margin:0;">إلغاء</button>
+              </div>
+          </div>
+
+          <div id="code-success-view" style="display: none; text-align: center;">
+              <h3>✅ تم بنجاح</h3>
+              <p id="code-success-message" style="color: var(--text-subtle);"></p>
+              <button id="viewContentBtn" class="btn btn-primary" style="margin-top: 15px;">عرض المحتوى</button>
+          </div>
+      </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script>
+    // إنشاء الجسيمات العشوائية للافتتاحية المتطابقة مع الهوية الطبية الجديدة
+    function createParticles() {
+      // لا نحتاج لجسيمات إضافية مع الأنيميشن الجديد الأكثر هدوءاً ونظافة
+      // لكن يمكن إضافتها لتأثير خفيف جدا
+    }
+    
+    // الانتقال من الافتتاحية إلى التطبيق الرئيسي بنفس الوقت (4 ثوانٍ تماماً)
+    function transitionToApp() {
+      const splashScreen = document.getElementById('splash-screen');
+      const app = document.querySelector('.app');
+      
+      // إضافة تأثير اختفاء مع تحريك
+      splashScreen.style.opacity = '0';
+      splashScreen.style.transform = 'scale(1.05)';
+      splashScreen.style.transition = 'opacity 0.6s ease-in-out, transform 0.6s ease-in-out';
+      
+      setTimeout(() => {
+        splashScreen.style.display = 'none';
+        app.style.display = 'block';
+        // بدء التطبيق الرئيسي مع تأثير ظهور
+        app.style.opacity = '0';
+        app.style.transform = 'translateY(15px)';
+        setTimeout(() => {
+          app.style.opacity = '1';
+          app.style.transform = 'translateY(0)';
+          app.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        }, 50);
+        // بدء التطبيق الرئيسي
+        initApp();
+      }, 600);
+    }
+    
+    // بدء الافتتاحية
+    document.addEventListener('DOMContentLoaded', () => {
+      createParticles();
+      
+      // الانتقال إلى التطبيق الرئيسي بعد 4.5 ثانية (لتكتمل كل الحركات بجمال)
+      setTimeout(transitionToApp, 4500);
+    });
+
+    // باقي كود التطبيق الرئيسي
+    function initApp() {
+      const tg = window.Telegram ? window.Telegram.WebApp : null;
+      // Modified: Allowed browser execution by wrapping tg checks
+      // Previously, this blocked execution if not inside Telegram
+      if (tg) {
+          tg.expand();
+          tg.ready();
+          tg.setHeaderColor('#4A90E2'); // تلوين الرأسية
+          tg.setBackgroundColor('#F8F9FA');
+    
+          tg.BackButton.onClick(() => {
+              window.history.back();
+          });
+      }
+
+      if (!window.supabase) {
+        console.warn("Supabase client not loaded. Attempting to run in offline mode.");
+        const offlineWarning = document.createElement('div');
+        offlineWarning.style = "background: var(--warning); color: var(--warning-dark-text); padding: 10px; text-align: center; font-weight: 700; position: fixed; top: 0; width: 100%; z-index: 5000; font-family: var(--font-content); transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);";
+        offlineWarning.textContent = "أنت غير متصل بالإنترنت. سيتم عرض المحتوى المحمل سابقاً فقط.";
+        document.body.prepend(offlineWarning);
+      }
+
+      const SUPABASE_URL = 'https://makvfhaettferocwqarp.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ha3ZmaGFldHRmZXJvY3dxYXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMjQ0NjMsImV4cCI6MjA4NjYwMDQ2M30.uEHtTtgMurzv-LwYoBTabfVYrGPDKoDDQcGJmUZ08LQ';
+      
+      const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+      let state = {
+          device_fp: null,
+          selectedCollege: null,
+          selectedYear: null,
+          selectedSubject: null,
+          selectedClassification: null,
+          selectedListItem: null,
+          currentContent: [],
+          currentList: [],
+          favorites: {}, 
+          currentGroupingKey: null,
+      };
+
+      // App Appearance Settings Variables
+      let appearanceSettings = {
+          fontSizeLevel: 1.0,
+          fontMode: 'default', // 'default' (Tajawal) or 'amiri'
+          inkMode: false // false (blue), true (black/contrast)
+      };
+
+      let stats = { solved: 0, correct: 0, wrong: 0 };
+      let answeredQuestions = new Map();
+      let userNotes = new Map();
+      let studiedItems = new Set();
+      let navigationHistory = [];
+      let activeModalId = null;
+
+      function loadSavedAnswers() {
+          try {
+              const saved = localStorage.getItem('med26_answers');
+              if (saved) {
+                  const parsed = JSON.parse(saved);
+                  answeredQuestions = new Map(parsed);
+              }
+          } catch (e) {
+              console.error('Error loading answers:', e);
+          }
+      }
+
+      function saveAnswers() {
+          try {
+              const arr = Array.from(answeredQuestions.entries());
+              localStorage.setItem('med26_answers', JSON.stringify(arr));
+          } catch(e) {}
+      }
+      
+      // Load appearance settings
+      function loadAppearanceSettings() {
+          try {
+              const savedFont = localStorage.getItem('app_font_mode');
+              if(savedFont) appearanceSettings.fontMode = savedFont;
+              
+              const savedSize = localStorage.getItem('app_font_size');
+              if(savedSize) appearanceSettings.fontSizeLevel = parseFloat(savedSize);
+              
+              const savedInk = localStorage.getItem('app_ink_mode');
+              if(savedInk) appearanceSettings.inkMode = (savedInk === 'true');
+              
+              applyAppearanceSettings();
+          } catch(e) {
+              console.error('Error loading appearance:', e);
+          }
+      }
+
+      function applyAppearanceSettings() {
+          // Font Family
+          if (appearanceSettings.fontMode === 'amiri') {
+              document.body.classList.add('amiri-font-mode');
+          } else {
+              document.body.classList.remove('amiri-font-mode');
+          }
+          
+          // Font Size
+          document.documentElement.style.setProperty('--text-scale', appearanceSettings.fontSizeLevel);
+          
+          // Ink Mode
+          if (appearanceSettings.inkMode) {
+              document.body.classList.add('ink-mode-active');
+          } else {
+              document.body.classList.remove('ink-mode-active');
+          }
+      }
+      
+      // Toggle Functions
+      function toggleFontMode() {
+          appearanceSettings.fontMode = (appearanceSettings.fontMode === 'default') ? 'amiri' : 'default';
+          localStorage.setItem('app_font_mode', appearanceSettings.fontMode);
+          applyAppearanceSettings();
+          playSound('click');
+      }
+      
+      function toggleInkMode() {
+          appearanceSettings.inkMode = !appearanceSettings.inkMode;
+          localStorage.setItem('app_ink_mode', appearanceSettings.inkMode.toString());
+          applyAppearanceSettings();
+          playSound('click');
+      }
+      
+      function adjustFontSize(delta) {
+          let newSize = appearanceSettings.fontSizeLevel + delta;
+          if (newSize < 0.8) newSize = 0.8;
+          if (newSize > 1.6) newSize = 1.6;
+          
+          appearanceSettings.fontSizeLevel = Math.round(newSize * 10) / 10;
+          localStorage.setItem('app_font_size', appearanceSettings.fontSizeLevel.toString());
+          applyAppearanceSettings();
+          playSound('click');
+      }
+
+      function updateTelegramBackButton() {
+          if (!tg) return; // Safely exit if not in Telegram
+          if ((navigationHistory.length <= 1 || (navigationHistory.length === 1 && navigationHistory[0] === 'college-screen')) && !activeModalId) {
+              tg.BackButton.hide();
+          } else {
+              tg.BackButton.show();
+          }
+      }
+
+      let timerInterval = null;
+      let timerSeconds = 0;
+      let isTimerRunning = false;
+      let audioCtx;
+
+      let realtimeChannel = null;
+      
+      const floatingMenuBtn = document.getElementById('floatingMenuBtn');
+      const floatingMenu = document.getElementById('floatingMenu');
+      const statsModal = document.getElementById('statsModal');
+      const subjectStatsModal = document.getElementById('subjectStatsModal');
+      const explanationModal = document.getElementById('explanation-modal');
+      const toastContainer = document.getElementById('toast-container');
+      const questionsListContainer = document.getElementById('questions-list-container');
+      const questionScreenCard = document.querySelector('#question-screen .card');
+      const scrollIndicatorDot = document.getElementById('scroll-indicator-dot');
+      let scrollTimeout = null;
+      let saveScrollTimeout = null;
+      let isSettingsCollapsed = true; // State for collapsible menu
+
+      let lastScrollTop = 0;
+      questionScreenCard.addEventListener('scroll', () => {
+          const scrollTop = questionScreenCard.scrollTop;
+          if (scrollTop > lastScrollTop) {
+              floatingMenuBtn.style.opacity = '0';
+              floatingMenuBtn.style.transform = 'scale(0.8)';
+              floatingMenuBtn.style.pointerEvents = 'none';
+          } else { 
+              floatingMenuBtn.style.opacity = '1';
+              floatingMenuBtn.style.transform = 'scale(1)';
+              floatingMenuBtn.style.pointerEvents = 'auto';
+          }
+          lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+
+          clearTimeout(saveScrollTimeout);
+          saveScrollTimeout = setTimeout(saveScrollPosition, 300);
+
+      }, { passive: true });
+
+      function playSound(type) {
+          try {
+              if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) {
+                  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              }
+              if (!audioCtx) return;
+
+              if (audioCtx.state === 'suspended') {
+                  audioCtx.resume();
+              }
+
+              const oscillator = audioCtx.createOscillator();
+              const gainNode = audioCtx.createGain();
+
+              oscillator.connect(gainNode);
+              gainNode.connect(audioCtx.destination);
+              gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+
+              switch(type) {
+                  case 'correct':
+                      oscillator.type = 'sine';
+                      oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                      oscillator.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+                      gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.3);
+                      oscillator.stop(audioCtx.currentTime + 0.3);
+                      break;
+                  case 'wrong':
+                      oscillator.type = 'sawtooth';
+                      oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                      oscillator.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                      gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.3);
+                      oscillator.stop(audioCtx.currentTime + 0.3);
+                      break;
+                  case 'click':
+                  default:
+                      oscillator.type = 'sine';
+                      oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+                      oscillator.frequency.exponentialRampToValueAtTime(660, audioCtx.currentTime + 0.1);
+                      gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+                      oscillator.stop(audioCtx.currentTime + 0.1);
+                      break;
+              }
+              oscillator.start(audioCtx.currentTime);
+          } catch (e) {
+              console.error("Web Audio API error:", e);
+              audioCtx = null;
+          }
+      }
+
+      function renderContentWithFeatures(text) {
+          if (!text) return '';
+          let processedText = text;
+          
+          processedText = processedText.replace(/Gg(.*?)Gg/gs, '<span class="color-green">$1</span>');
+          processedText = processedText.replace(/Bb(.*?)Bb/gs, '<span class="color-blue">$1</span>');
+          processedText = processedText.replace(/Rr(.*?)Rr/gs, '<span class="color-red">$1</span>');
+          processedText = processedText.replace(/Oo(.*?)Oo/gs, '<span class="color-orange">$1</span>');
+          processedText = processedText.replace(/Yy(.*?)Yy/gs, '<span class="color-yellow">$1</span>');
+          processedText = processedText.replace(/#/g, '<br>');
+
+          processedText = processedText.replace(/\|\|(.*?)\|\|/g, '<span class="highlight-red">$1</span>');
+          processedText = processedText.replace(/\[(.*?)\]/g, '<span class="highlight-green">$1</span>');
+          processedText = processedText.replace(/\((.*?)\)/g, '$1');
+          processedText = processedText.replace(/\/\/(.*?)\/\//g, '<span class="highlight-blue">$1</span>');
+          
+          const urlRegex = /(https?:\/\/[^\s]+)/g;
+          processedText = processedText.replace(urlRegex, (url) => {
+              if (/\.(jpeg|jpg|gif|png|svg)$/i.test(url)) {
+                  return `<img src="${url}" alt="صورة توضيحية" loading="lazy" oncontextmenu="return false;" style="pointer-events: none; -webkit-touch-callout: none;">`;
+              } else if (/\.(mp4|webm|ogg)$/i.test(url)) {
+                  return `<video controls controlsList="nodownload" oncontextmenu="return false;" style="pointer-events: none; -webkit-touch-callout: none;"><source src="${url}" type="video/mp4">المتصفح لا يدعم عرض الفيديو.</video>`;
+              } else if (/\.(mp3|wav|ogg|m4a)$/i.test(url)) {
+                  return `<audio controls controlsList="nodownload"><source src="${url}" type="audio/mpeg">المتصفح لا يدعم تشغيل الصوت.</audio>`;
+              } else if (/\.html$/i.test(url)) {
+                   return `<iframe src="${url}" title="محتوى مضمن"></iframe>`;
+              }
+              return `<a href="${url}" target="_blank">${url}</a>`;
+          });
+          return processedText;
+      }
+      
+      function extractSortNumber(item) {
+          const text = item.question || item.idea_title || '';
+          const match = text.match(/^\s*\(\s*(\d+)\s*\)/); 
+          if (match && match[1]) {
+              return parseInt(match[1], 10);
+          }
+          return Infinity; 
+      }
+
+      const handleQuestionScroll = () => {
+          if (scrollTimeout) clearTimeout(scrollTimeout);
+          scrollIndicatorDot.classList.add('visible');
+
+          const scrollableHeight = questionScreenCard.scrollHeight - questionScreenCard.clientHeight;
+          if (scrollableHeight > 0) {
+              const progress = questionScreenCard.scrollTop / scrollableHeight;
+              const trackHeight = window.innerHeight - scrollIndicatorDot.offsetHeight;
+              const newTop = progress * trackHeight;
+              scrollIndicatorDot.style.top = `${Math.max(0, Math.min(newTop, trackHeight))}px`;
+          }
+
+          scrollTimeout = setTimeout(() => {
+              scrollIndicatorDot.classList.remove('visible');
+          }, 1500);
+      };
+      
+      function showModal(modalId, replace = false) {
+          if (activeModalId && activeModalId !== modalId) {
+              const oldModal = document.getElementById(activeModalId);
+              if (oldModal) oldModal.classList.remove('active');
+          }
+          
+          const modal = document.getElementById(modalId);
+          if (!modal) return;
+
+          modal.classList.add('active');
+          activeModalId = modalId;
+
+          const currentScreen = navigationHistory[navigationHistory.length - 1] || 'college-screen';
+          const newState = { 
+              screen: currentScreen, 
+              modal: modalId, 
+              nav: [...navigationHistory] 
+          };
+
+          if (replace) {
+              history.replaceState(newState, '', '#' + modalId);
+          } else {
+              history.pushState(newState, '', '#' + modalId);
+          }
+          updateTelegramBackButton();
+      }
+
+      function hideModal(modalId, goBack = true) {
+          const modal = document.getElementById(modalId);
+          if (!modal) return;
+
+          modal.classList.remove('active');
+
+          if (activeModalId === modalId) {
+              activeModalId = null;
+              if (goBack && history.state && history.state.modal === modalId) {
+                  history.back();
+              }
+          }
+          updateTelegramBackButton();
+      }
+
+      function showScreen(screenId, push = false) {
+          if (push && activeModalId) {
+              const modal = document.getElementById(activeModalId);
+              if (modal) modal.classList.remove('active');
+              activeModalId = null;
+          }
+
+          if (document.getElementById('question-screen').classList.contains('active') && screenId !== 'question-screen') {
+              saveScrollPosition();
+          }
+
+          document.querySelectorAll('.screen').forEach(s => {
+              s.classList.remove('active', 'slide-in');
+          });
+          
+          const target = document.getElementById(screenId);
+          if (!target) return;
+
+          target.style.opacity = '0';
+          target.style.transform = 'translateY(10px)';
+          
+          setTimeout(() => {
+              target.style.opacity = '1';
+              target.style.transform = 'translateY(0)';
+          }, 10);
+
+          if (screenId === 'question-screen') {
+              document.body.classList.add('question-mode-active');
+              questionScreenCard.addEventListener('scroll', handleQuestionScroll, { passive: true });
+          } else {
+              document.body.classList.remove('question-mode-active');
+              questionScreenCard.removeEventListener('scroll', handleQuestionScroll);
+              scrollIndicatorDot.classList.remove('visible');
+              floatingMenuBtn.style.opacity = '1';
+              floatingMenuBtn.style.transform = 'scale(1)';
+              floatingMenuBtn.style.pointerEvents = 'auto';
+          }
+
+          target.classList.add('active');
+          const card = target.querySelector('.card');
+          
+          if (card && screenId !== 'question-screen') { 
+              card.scrollTop = 0;
+          }
+
+          if (push) {
+              if (navigationHistory[navigationHistory.length - 1] !== screenId) {
+                  navigationHistory.push(screenId);
+                  history.pushState({ screen: screenId, nav: [...navigationHistory] }, '', '#' + screenId);
+              }
+          }
+          updateTelegramBackButton();
+      }
+
+      window.onpopstate = (e) => {
+          const state = e.state;
+          const currentActiveScreen = document.querySelector('.screen.active')?.id;
+
+          if (currentActiveScreen === 'question-screen' && (!state || state.screen !== 'question-screen')) {
+              saveScrollPosition();
+          }
+
+          if (state && state.screen) {
+              navigationHistory = state.nav || ['college-screen'];
+              
+              if (currentActiveScreen !== state.screen) {
+                  showScreen(state.screen, false);
+              }
+          } else {
+              navigationHistory = ['college-screen'];
+              showScreen('college-screen', false);
+          }
+
+          if (state && state.modal) {
+              if (activeModalId !== state.modal) {
+                  const modal = document.getElementById(state.modal);
+                  if (modal) modal.classList.add('active');
+                  activeModalId = state.modal;
+                  
+                  if(state.modal === 'floatingMenu') renderFloatingMenu();
+              }
+          } else if (activeModalId) {
+              const modal = document.getElementById(activeModalId);
+              if (modal) modal.classList.remove('active');
+              activeModalId = null;
+          }
+          updateTelegramBackButton();
+      };
+
+      function saveScrollPosition() {
+          if (document.getElementById('question-screen').classList.contains('active') && state.selectedSubject && state.selectedClassification) {
+              const keyParts = ['scroll', state.selectedCollege, state.selectedYear, state.selectedSubject, state.selectedClassification, state.selectedListItem || 'main'];
+              const progressKey = keyParts.join('_');
+              localStorage.setItem(progressKey, questionScreenCard.scrollTop);
+          }
+      }
+
+      function restoreScrollPosition() {
+          if (state.selectedSubject && state.selectedClassification) {
+              const keyParts = ['scroll', state.selectedCollege, state.selectedYear, state.selectedSubject, state.selectedClassification, state.selectedListItem || 'main'];
+              const progressKey = keyParts.join('_');
+              const savedScrollTop = localStorage.getItem(progressKey);
+              if (savedScrollTop) {
+                  const scrollPos = parseInt(savedScrollTop, 10);
+                  requestAnimationFrame(() => {
+                      questionScreenCard.scrollTop = scrollPos;
+                      setTimeout(() => { questionScreenCard.scrollTop = scrollPos; }, 50);
+                      setTimeout(() => { questionScreenCard.scrollTop = scrollPos; }, 150);
+                      setTimeout(() => { questionScreenCard.scrollTop = scrollPos; }, 500);
+                  });
+              } else {
+                  questionScreenCard.scrollTop = 0;
+              }
+          }
+      }
+
+      async function getDeviceFingerprint() {
+        try {
+          let stored = localStorage.getItem('device_fp'); if (stored) return stored;
+          const parts = [(navigator.userAgent || ''), screen.width + 'x' + screen.height, new Date().getTimezoneOffset(), (navigator.language || '')].join('|');
+          const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(parts));
+          const arr = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+          localStorage.setItem('device_fp', arr); return arr;
+        } catch(e) { const fallback = 'fp_' + Math.random().toString(36).slice(2,12); localStorage.setItem('device_fp', fallback); return fallback; }
+      }
+
+      function toggleCollegesList(show) {
+          playSound('click');
+          const container = document.getElementById('collegesListContainer');
+          
+          if (show) {
+              container.style.display = 'block';
+              container.style.opacity = '0';
+              container.style.transform = 'translateY(10px)';
+              setTimeout(() => {
+                  container.style.opacity = '1';
+                  container.style.transform = 'translateY(0)';
+                  container.style.transition = 'opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+              }, 10);
+          } else {
+              container.style.opacity = '0';
+              container.style.transform = 'translateY(10px)';
+              setTimeout(() => {
+                  container.style.display = 'none';
+              }, 300);
+          }
+      }
+
+      async function loadMainScreen(silent = false) {
+          const downloadedSection = document.getElementById('downloaded-content-section');
+          const downloadedListEl = document.getElementById('downloadedList');
+          const collegesListContainer = document.getElementById('collegesListContainer');
+          const collegeSelect = document.getElementById('college-select');
+          const yearSelect = document.getElementById('year-select');
+          const nextBtn = document.getElementById('next-step-btn');
+          
+          // Rename button text to requested value
+          nextBtn.textContent = 'تنزيل وتصفح المحتوى';
+
+          const downloaded = JSON.parse(localStorage.getItem('downloadedContent') || '[]');
+          const hasDownloadedContent = downloaded.length > 0;
+
+          downloadedListEl.innerHTML = '';
+          if (hasDownloadedContent) {
+              const allSubjects = new Map();
+
+              downloaded.forEach(item => {
+                  const cacheKey = `content_${item.college}_${item.year}`;
+                  const cached = localStorage.getItem(cacheKey);
+                  if (!cached) return;
+
+                  try {
+                      const parsed = JSON.parse(cached);
+                      if (parsed?.device_fp === state.device_fp && parsed.content) {
+                          const content = parsed.content || [];
+                          const subjects = [...new Set(content.map(c => c.subject || 'عام'))];
+                          
+                          allSubjects.set(cacheKey, {
+                              college: item.college,
+                              year: item.year,
+                              subjects: subjects,
+                              content: content 
+                          });
+                      }
+                  } catch (e) {
+                      console.error('Failed to parse cached content for subjects:', e);
+                  }
+              });
+
+              allSubjects.forEach((data, cacheKey) => {
+                  if (allSubjects.size > 1) {
+                      const yearTitle = document.createElement('h4');
+                      yearTitle.textContent = `${data.college} - ${data.year}`;
+                      yearTitle.style.textAlign = 'center';
+                      yearTitle.style.color = 'var(--primary-solid)';
+                      yearTitle.style.marginTop = '20px';
+                      downloadedListEl.appendChild(yearTitle);
+                  }
+
+                  data.subjects.forEach(subjectName => {
+                      const subjContent = data.content.filter(c => (c.subject || 'عام') === subjectName);
+                      const sStats = {
+                          banks: subjContent.filter(i => i.classification === 'بنوك').length,
+                          courses: subjContent.filter(i => i.classification === 'دورات').length,
+                          ideas: subjContent.filter(i => i.classification === 'أفكار').length
+                      };
+
+                      const wrapper = document.createElement('div');
+                      wrapper.className = 'subject-item-wrapper';
+
+                      const btn = document.createElement('button');
+                      btn.className = 'choice-frame subject-choice-frame';
+                      btn.textContent = subjectName;
+                      
+                      btn.onclick = () => {
+                          playSound('click');
+                          
+                          state.selectedCollege = data.college;
+                          state.selectedYear = data.year;
+                          state.currentContent = data.content;
+                          
+                          state.selectedSubject = subjectName;
+                          document.getElementById('category-title').textContent = subjectName;
+                          showScreen('category-screen', true);
+                          
+                          if (supabase) {
+                              subscribeToContentChanges(data.college, data.year);
+                          }
+                      };
+
+                      const statsBtn = document.createElement('button');
+                      statsBtn.className = 'stats-btn';
+                      statsBtn.title = 'إحصائيات المادة';
+                      statsBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><polyline points="7 14 11 10 15 14 19 10"></polyline></svg>`;
+                      statsBtn.onclick = (e) => {
+                          e.stopPropagation();
+                          playSound('click');
+                          showSubjectStatsModal(subjectName, sStats);
+                      };
+
+                      wrapper.appendChild(btn);
+                      wrapper.appendChild(statsBtn);
+                      downloadedListEl.appendChild(wrapper);
+                  });
+              });
+          }
+          
+          if (hasDownloadedContent) {
+              downloadedSection.style.display = 'block';
+              collegesListContainer.style.display = 'none';
+              
+              if (!navigator.onLine) {
+                  return;
+              }
+          } else {
+              downloadedSection.style.display = 'none';
+              collegesListContainer.style.display = 'block';
+          }
+          
+          if (!supabase || !navigator.onLine) {
+              if (!hasDownloadedContent) {
+                  collegeSelect.innerHTML = '<option disabled>لا يوجد اتصال بالإنترنت</option>';
+              }
+              return;
+          }
+
+          collegeSelect.innerHTML = '<option value="" disabled selected>...جاري تحميل الكليات</option>';
+          yearSelect.innerHTML = '<option value="" disabled selected>يرجى اختيار الكلية أولاً</option>';
+          yearSelect.disabled = true;
+          nextBtn.disabled = true;
+          
+          const { data, error } = await supabase.from('content_metadata').select('college').neq('college', null).order('college');
+          if (error) {
+              collegeSelect.innerHTML = `<option disabled>خطأ: ${error.message}</option>`;
+              throw new Error(error.message);
+          }
+          
+          const uniq = [...new Set((data || []).map(r => r.college))].filter(Boolean);
+          collegeSelect.innerHTML = '<option value="" disabled selected>اختر الكلية...</option>';
+          uniq.forEach(c => {
+              const opt = document.createElement('option');
+              opt.value = c;
+              opt.textContent = c;
+              collegeSelect.appendChild(opt);
+          });
+
+          collegeSelect.onchange = async () => {
+              const selectedC = collegeSelect.value;
+              state.selectedCollege = selectedC;
+              state.selectedYear = null;
+              
+              yearSelect.innerHTML = '<option value="" disabled selected>...جاري تحميل السنوات</option>';
+              yearSelect.disabled = true;
+              nextBtn.disabled = true;
+
+              const { data: yData, error: yError } = await supabase.from('content_metadata').select('year').eq('college', selectedC).order('year');
+              
+              if (yError) {
+                   yearSelect.innerHTML = `<option disabled>خطأ</option>`;
+                   return;
+              }
+              
+              const uniqY = [...new Set((yData || []).map(r => r.year))].filter(Boolean);
+              yearSelect.innerHTML = '<option value="" disabled selected>اختر السنة...</option>';
+              uniqY.forEach(y => {
+                  const opt = document.createElement('option');
+                  opt.value = y;
+                  opt.textContent = y;
+                  yearSelect.appendChild(opt);
+              });
+              yearSelect.disabled = false;
+          };
+
+          yearSelect.onchange = () => {
+              state.selectedYear = yearSelect.value;
+              nextBtn.disabled = false;
+          };
+
+          nextBtn.onclick = () => {
+              playSound('click');
+              if (state.selectedYear) {
+                  // Direct flow for auto-code
+                  performAutoCodeCheck(state.selectedYear);
+              }
+          };
+      }
+
+      function loadDownloadedYear(college, year) {
+          state.selectedCollege = college;
+          state.selectedYear = year;
+          const cacheKey = `content_${college}_${year}`;
+          const cached = localStorage.getItem(cacheKey);
+
+          if (cached) {
+              try {
+                  const parsed = JSON.parse(cached);
+                  if (parsed?.device_fp === state.device_fp && parsed.content) {
+                      state.currentContent = parsed.content || [];
+                      
+                      if (supabase) {
+                          subscribeToContentChanges(college, year);
+                      }
+
+                      navigationHistory = ['college-screen', 'subject-screen'];
+                      history.pushState({ screen: 'subject-screen', nav: navigationHistory }, '', '#subject-screen');
+                      
+                      renderSubjects(false);
+                      showScreen('subject-screen', false);
+                      return;
+                  }
+              } catch(e){
+                  console.error('Cache load error:', e);
+                  localStorage.removeItem(cacheKey);
+              }
+          }
+      }
+
+      async function selectCollege(college){
+          if (!supabase) { showToast('لا يوجد اتصال بالإنترنت', 'danger'); return; }
+          
+          playSound('click');
+          state.selectedCollege = college;
+          document.getElementById('selected-college-title').textContent = college;
+          showScreen('year-screen', true);
+          const el = document.getElementById('yearsList');
+          el.innerHTML = '<p>...جاري التحميل</p>';
+          const { data, error } = await supabase.from('content_metadata').select('year').eq('college', college).order('year');
+          if (error) { el.innerHTML = `<p style="color:var(--danger);">خطأ: ${error.message}</p>`; return; }
+          const uniq = [...new Set((data || []).map(r => r.year))].filter(Boolean);
+          el.innerHTML = '';
+          uniq.forEach(y => {
+              const btn = document.createElement('button');
+              btn.className = 'choice-frame';
+              btn.textContent = y;
+              btn.onclick = () => { playSound('click'); promptYearOption(y); };
+              el.appendChild(btn);
+          });
+      }
+      
+      // Auto Code Function Logic (Code 1)
+      function performAutoCodeCheck(year) {
+          state.selectedYear = year;
+          
+          // Setup UI for Code Modal (Simulate manual entry)
+          const modal = document.getElementById('codeModal');
+          const entryView = document.getElementById('code-entry-view');
+          const successView = document.getElementById('code-success-view');
+          const input = document.getElementById('codeInput');
+          const applyBtn = document.getElementById('applyCodeBtn');
+          const btnsContainer = applyBtn.parentNode;
+
+          document.getElementById('code-entry-title').textContent = `${year} - ${state.selectedCollege}`;
+          entryView.style.display = 'block';
+          successView.style.display = 'none';
+          
+          // Hide Manual controls
+          input.style.display = 'none';
+          btnsContainer.style.display = 'none';
+
+          // Add Loading Text if not exists
+          let loader = document.getElementById('auto-loader-msg');
+          if (!loader) {
+              loader = document.createElement('h3');
+              loader.id = 'auto-loader-msg';
+              loader.style.color = 'var(--primary-solid)';
+              loader.style.textAlign = 'center';
+              loader.style.marginTop = '20px';
+              entryView.appendChild(loader);
+          }
+          loader.textContent = '...جاري تحضير المحتوى';
+          loader.style.display = 'block';
+
+          showModal('codeModal');
+
+          // Execute unlock code '1'
+          setTimeout(() => {
+              applyUnlockCode('1').then(() => {
+                  // The applyUnlockCode logic will handle success view or toast errors
+              });
+          }, 500);
+      }
+
+      function promptYearOption(year) {
+          state.selectedYear = year;
+          document.getElementById('year-choice-title').textContent = `${year} - ${state.selectedCollege}`;
+          
+          showModal('year-choice-modal');
+          
+          document.getElementById('full-content-btn').onclick = () => {
+              playSound('click');
+              hideModal('year-choice-modal', false);
+              performAutoCodeCheck(year); 
+          };
+      }
+
+      async function chooseYear(year, silent = false){
+          if (!supabase) { showToast('لا يوجد اتصال بالإنترنت', 'danger'); return; }
+
+          state.selectedYear = year;
+          
+          const { data, error } = await supabase.rpc('rpc_get_year_content', { p_college: state.selectedCollege, p_year: state.selectedYear, p_device_fp: state.device_fp });
+
+          if (error) {
+              return;
+          }
+
+          state.currentContent = data?.content || [];
+          if (state.currentContent.length === 0) {
+              return;
+          }
+          
+          renderSubjects(silent);
+          
+          if (!silent) {
+              subscribeToContentChanges(state.selectedCollege, state.selectedYear);
+          }
+      }
+
+      function renderSubjects(silent = false) {
+          if(!silent) showScreen('subject-screen', true);
+          document.getElementById('materials-title').textContent = `${state.selectedCollege} — ${state.selectedYear}`;
+          const el = document.getElementById('subjectsList');
+          const subjects = [...new Set(state.currentContent.map(item => item.subject || 'عام'))];
+          el.innerHTML = '';
+
+          const subjectStats = subjects.reduce((acc, subj) => {
+              const contentForSubject = state.currentContent.filter(item => (item.subject || 'عام') === subj);
+              acc[subj] = {
+                  banks: contentForSubject.filter(item => item.classification === 'بنوك').length,
+                  courses: contentForSubject.filter(item => item.classification === 'دورات').length,
+                  ideas: contentForSubject.filter(item => item.classification === 'أفكار').length,
+              };
+              return acc;
+          }, {});
+
+          subjects.forEach(subj => {
+              const wrapper = document.createElement('div');
+              wrapper.className = 'subject-item-wrapper';
+
+              const btn = document.createElement('button');
+              btn.className = 'choice-frame subject-choice-frame';
+              btn.textContent = subj;
+              btn.onclick = () => selectSubject(subj);
+              wrapper.appendChild(btn);
+
+              const statsBtn = document.createElement('button');
+              statsBtn.className = 'stats-btn';
+              statsBtn.title = 'إحصائيات المادة';
+              statsBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><polyline points="7 14 11 10 15 14 19 10"></polyline></svg>`;
+              statsBtn.onclick = (e) => { e.stopPropagation(); playSound('click'); showSubjectStatsModal(subj, subjectStats[subj]); };
+              wrapper.appendChild(statsBtn);
+
+              el.appendChild(wrapper);
+          });
+      }
+
+      function selectSubject(subject, silent = false){
+          playSound('click');
+          state.selectedSubject = subject;
+          document.getElementById('category-title').textContent = subject;
+          if(!silent) showScreen('category-screen', true);
+      }
+
+      document.querySelectorAll('#category-screen button[data-category]').forEach(btn => {
+          btn.onclick = () => {
+              playSound('click');
+              const classification = btn.getAttribute('data-category');
+              if (classification === 'المفضلة') {
+                  showFavorites();
+              } else {
+                  showGroupedList(classification);
+              }
+          };
+      });
+
+      // --- STUDIED / COMPLETED LOGIC START ---
+      function loadStudiedItems() {
+          const stored = localStorage.getItem('med26_studied_items');
+          if (stored) {
+              try {
+                  studiedItems = new Set(JSON.parse(stored));
+              } catch(e) {
+                  studiedItems = new Set();
+              }
+          }
+      }
+
+      function saveStudiedItems() {
+          localStorage.setItem('med26_studied_items', JSON.stringify(Array.from(studiedItems)));
+      }
+
+      function toggleStudiedItem(key) {
+          if (studiedItems.has(key)) {
+              studiedItems.delete(key);
+          } else {
+              studiedItems.add(key);
+          }
+          saveStudiedItems();
+          playSound('click');
+      }
+      // --- STUDIED / COMPLETED LOGIC END ---
+
+      function showGroupedList(classification, silent = false) {
+          state.selectedClassification = classification;
+          const filteredContent = state.currentContent.filter(item =>
+              (item.subject || 'عام') === state.selectedSubject && item.classification === classification
+          );
+
+          const isIdeasOrBanks = classification === 'أفكار' || classification === 'بنوك';
+          const primaryGroupingKey = isIdeasOrBanks ? 'lecture_name' : 'course_title';
+          const primaryGroups = [...new Set(filteredContent.map(item => item[primaryGroupingKey]).filter(Boolean))];
+          
+          if (primaryGroups.length === 0) {
+              state.currentList = filteredContent.sort((a, b) => extractSortNumber(a) - extractSortNumber(b));
+
+              if (state.currentList.length === 0) {
+                  if (!silent) return;
+              }
+              state.selectedListItem = null;
+              state.currentGroupingKey = null;
+              resetAllAnswers(true);
+              renderAllQuestions();
+              if (!silent) showScreen('question-screen', true);
+              restoreScrollPosition();
+              return;
+          }
+          
+          const container = document.getElementById('list-view-container');
+          container.innerHTML = '';
+
+          primaryGroups.forEach(groupName => {
+              const uniqueKey = `${state.selectedSubject}_${classification}_${groupName}`;
+              
+              const wrapper = document.createElement('div');
+              wrapper.className = 'subject-item-wrapper';
+
+              const item = document.createElement('button');
+              item.className = 'choice-frame subject-choice-frame'; // Reuse logic
+              item.textContent = groupName;
+              item.onclick = () => openContentList(groupName, primaryGroupingKey);
+              
+              // زر "تمت الدراسة" (الصح)
+              const checkBtn = document.createElement('button');
+              checkBtn.className = 'stats-btn studied-toggle-btn';
+              // Check if currently studied
+              const isStudied = studiedItems.has(uniqueKey);
+              if (isStudied) checkBtn.classList.add('is-studied');
+
+              // Icon logic: Checkmark or Empty Circle
+              checkBtn.innerHTML = isStudied 
+                  ? `<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>` // Bold Check
+                  : `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>`; // Circle
+
+              checkBtn.onclick = (e) => {
+                  e.stopPropagation();
+                  toggleStudiedItem(uniqueKey);
+                  // Update Visual immediately
+                  if (studiedItems.has(uniqueKey)) {
+                      checkBtn.classList.add('is-studied');
+                      checkBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                  } else {
+                      checkBtn.classList.remove('is-studied');
+                      checkBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>`;
+                  }
+              };
+
+              wrapper.appendChild(item);
+              wrapper.appendChild(checkBtn);
+              container.appendChild(wrapper);
+          });
+
+          if (!silent) showScreen('list-view-screen', true);
+      }
+
+      function openContentList(groupName, groupingKey, silent = false) {
+          playSound('click');
+          state.selectedListItem = groupName;
+          state.currentGroupingKey = groupingKey;
+          
+          state.currentList = state.currentContent.filter(item =>
+              (item.subject || 'عام') === state.selectedSubject &&
+              item.classification === state.selectedClassification &&
+              item[groupingKey] === groupName
+          ).sort((a, b) => extractSortNumber(a) - extractSortNumber(b));
+
+          resetAllAnswers(true);
+          renderAllQuestions();
+          if(!silent) showScreen('question-screen', true);
+          restoreScrollPosition();
+      }
+
+      function openContentListByLecture(lectureName, silent = false) {
+          playSound('click');
+          state.selectedListItem = lectureName;
+          state.currentGroupingKey = 'lecture_name';
+
+          state.currentList = state.currentContent.filter(item =>
+              (item.subject || 'عام') === state.selectedSubject &&
+              item.classification === 'دورات' &&
+              item.lecture_name === lectureName
+          ).sort((a, b) => extractSortNumber(a) - extractSortNumber(b));
+          
+          resetAllAnswers(true);
+          renderAllQuestions();
+          if(!silent) showScreen('question-screen', true);
+          restoreScrollPosition();
+      }
+
+      function closeCodeModal() {
+          hideModal('codeModal');
+          
+          setTimeout(() => {
+              document.getElementById('code-entry-view').style.display = 'block';
+              document.getElementById('code-success-view').style.display = 'none';
+          }, 300);
+      }
+
+      function showCodeModalForYear(year, replace = false) {
+          if (!supabase) { showToast('لا يوجد اتصال بالإنترنت لإدخال الكود', 'danger'); return; }
+
+          state.selectedYear = year;
+          document.getElementById('code-entry-title').textContent = `${year} - ${state.selectedCollege}`;
+          document.getElementById('code-entry-view').style.display = 'block';
+          document.getElementById('code-success-view').style.display = 'none';
+          
+          // Reset styles in case auto-code messed them
+          document.getElementById('codeInput').style.display = 'block';
+          document.getElementById('applyCodeBtn').parentNode.style.display = 'flex';
+          const loader = document.getElementById('auto-loader-msg');
+          if (loader) loader.style.display = 'none';
+
+          showModal('codeModal', replace); 
+          
+          document.getElementById('codeInput').value = '';
+          document.getElementById('applyCodeBtn').onclick = async () => {
+              playSound('click');
+              const code = document.getElementById('codeInput').value.trim().toUpperCase();
+              if (!code) { 
+                  return; 
+              }
+              await applyUnlockCode(code);
+          };
+      }
+
+      async function applyUnlockCode(code) {
+          if (!supabase) { showToast('لا يوجد اتصال بالإنترنت للتحقق من الكود', 'danger'); return; }
+
+          const applyBtn = document.getElementById('applyCodeBtn');
+          const originalBtnText = applyBtn.innerHTML;
+          applyBtn.innerHTML = '...جاري التحقق';
+          applyBtn.disabled = true;
+
+          const { data, error } = await supabase.rpc('rpc_unlock_code', { 
+              p_code: code, 
+              p_device_fp: state.device_fp,
+              p_college: state.selectedCollege,
+              p_year: state.selectedYear
+          });
+
+          applyBtn.innerHTML = originalBtnText;
+          applyBtn.disabled = false;
+
+          if (error) {
+              showToast('كود خاطئ', 'danger');
+              // Restore Manual view if failed during auto check to avoid being stuck? 
+              // Or user has to re-try. 
+              return;
+          }
+
+          if (data?.status === 'ok') {
+              document.getElementById('code-entry-view').style.display = 'none';
+              const successMsg = document.getElementById('code-success-message');
+              successMsg.textContent = `تم فتح محتوى (${data.college} / ${data.year}) بنجاح.`;
+              document.getElementById('code-success-view').style.display = 'block';
+
+              document.getElementById('viewContentBtn').onclick = () => {
+                  playSound('click');
+                  
+                  state.currentContent = data.content || [];
+                  
+                  try {
+                    const key = `content_${data.college}_${data.year}`;
+                    const contentToStore = JSON.stringify({ device_fp: state.device_fp, content: data.content });
+                    localStorage.setItem(key, contentToStore);
+                  } catch (e) {
+                      console.error("Local storage error: ", e);
+                  }
+                  
+                  let downloaded = JSON.parse(localStorage.getItem('downloadedContent') || '[]');
+                  const alreadyExists = downloaded.some(item => item.college === data.college && item.year === data.year);
+                  if (!alreadyExists) {
+                      downloaded.push({ college: data.college, year: data.year });
+                      localStorage.setItem('downloadedContent', JSON.stringify(downloaded));
+                  }
+                  
+                  closeCodeModal();
+                  
+                  renderSubjects(false); // هذا السطر يضمن ظهور زر الإحصائيات مع المواد
+                  subscribeToContentChanges(data.college, data.year);
+                  showScreen('subject-screen', true);
+              };
+          } else {
+              let message = 'كود خاطئ';
+              showToast(message, 'danger');
+          }
+      }
+
+      function loadFavorites() {
+          const favs = localStorage.getItem('favorites');
+          if (favs) {
+              try {
+                  const parsed = JSON.parse(favs);
+                  if (Array.isArray(parsed)) {
+                      state.favorites = { 'عام': parsed };
+                      saveFavorites();
+                  } else {
+                      state.favorites = parsed;
+                  }
+              } catch (e) {
+                  state.favorites = {};
+              }
+          } else {
+              state.favorites = {};
+          }
+      }
+
+      function saveFavorites() {
+          localStorage.setItem('favorites', JSON.stringify(state.favorites));
+      }
+
+      function loadNotes() {
+          try {
+              const notesData = localStorage.getItem('userNotes');
+              if (notesData) {
+                  userNotes = new Map(JSON.parse(notesData));
+              }
+          } catch (e) {
+              console.error("Failed to load notes:", e);
+              userNotes = new Map();
+          }
+      }
+
+      function saveNotes() {
+          try {
+              const notesData = JSON.stringify(Array.from(userNotes.entries()));
+              localStorage.setItem('userNotes', notesData);
+          } catch (e) {
+              console.error("Failed to save notes:", e);
+          }
+      }
+
+      function toggleFavorite(questionId) {
+          playSound('click');
+          const subject = state.selectedSubject || 'عام';
+          
+          if (!state.favorites[subject]) {
+              state.favorites[subject] = [];
+          }
+          
+          const index = state.favorites[subject].indexOf(questionId);
+          if (index > -1) {
+              state.favorites[subject].splice(index, 1);
+          } else {
+              state.favorites[subject].push(questionId);
+          }
+          saveFavorites();
+
+          const favBtn = document.querySelector(`.fav-btn[data-question-id="${questionId}"]`);
+          if (favBtn) {
+              favBtn.classList.toggle('favorited', index === -1);
+          }
+      }
+
+      function showFavorites(silent = false) {
+          state.selectedClassification = 'المفضلة';
+          state.selectedListItem = null;
+          state.currentGroupingKey = null;
+          if (state.currentContent.length === 0) {
+              return;
+          }
+          
+          const subject = state.selectedSubject || 'عام';
+          const favoriteIds = new Set(state.favorites[subject] || []);
+          
+          state.currentList = state.currentContent.filter(item => favoriteIds.has(item.id))
+                               .sort((a, b) => extractSortNumber(a) - extractSortNumber(b));
+          
+          if (state.currentList.length === 0) {
+               if (!silent) return;
+          }
+          resetAllAnswers(true);
+          renderAllQuestions();
+          if(!silent) showScreen('question-screen', true);
+          restoreScrollPosition();
+      }
+
+      function renderAllQuestions() {
+          questionsListContainer.innerHTML = '';
+          questionScreenCard.scrollTop = 0;
+
+          state.currentList.forEach((row, index) => {
+              const wrapper = document.createElement('div');
+              wrapper.className = 'question-wrapper';
+              wrapper.setAttribute('data-question-id', row.id);
+
+              const textEl = document.createElement('p');
+              textEl.className = 'question-text rendered-content';
+              
+              const rawText = row.question || row.idea_title || 'لا يوجد عنوان';
+              const numberMatch = rawText.match(/^\s*\(\s*(\d+)\s*\)/);
+              
+              let displayNumber;
+              let cleanedText;
+
+              if (numberMatch && numberMatch[1]) {
+                  displayNumber = numberMatch[1];
+                  cleanedText = rawText.replace(numberMatch[0], '').trim(); 
+              } else {
+                  displayNumber = index + 1;
+                  cleanedText = rawText;
+              }
+
+              const renderedQuestionText = renderContentWithFeatures(cleanedText);
+              const questionContent = `<strong class="special-text">[${displayNumber}]</strong> ${renderedQuestionText}`;
+
+              textEl.innerHTML = questionContent;
+              wrapper.appendChild(textEl);
+
+              let options = []; 
+              try { 
+                  if (row.choices_json) {
+                      options = (typeof row.choices_json === 'string') ? JSON.parse(row.choices_json) : row.choices_json;
+                  }
+              } catch (e) { console.error('JSON parse error for ID:', row.id, e); }
+              const correctAnswerIndex = row.correct_answer ? (parseInt(row.correct_answer.replace('choice_', '')) - 1) : -1;
+
+              if (options.length > 0) {
+                  const answersDiv = document.createElement('div'); answersDiv.className = 'answers';
+                  options.forEach((option, optionIndex) => {
+                      const btn = document.createElement('button');
+                      btn.className = 'rendered-content';
+                      btn.innerHTML = renderContentWithFeatures(option);
+                      btn.onclick = () => checkAnswer(btn, row.id, optionIndex, correctAnswerIndex);
+                      answersDiv.appendChild(btn);
+                      const answeredData = answeredQuestions.get(row.id);
+                      if (answeredData) {
+                          btn.disabled = true;
+                          if (answeredData.chosenIndex === optionIndex) btn.classList.add(answeredData.isCorrect ? 'correct' : 'wrong');
+                          if (!answeredData.isCorrect && optionIndex === correctAnswerIndex) btn.classList.add('correct');
+                      }
+                  });
+                  wrapper.appendChild(answersDiv);
+              }
+              else if (row.idea_text) {
+                  const ideaTextEl = document.createElement('div'); ideaTextEl.className = 'idea-content-box rendered-content';
+                  ideaTextEl.innerHTML = renderContentWithFeatures(row.idea_text);
+                  wrapper.appendChild(ideaTextEl);
+              }
+
+              const actionsDiv = document.createElement('div'); actionsDiv.className = 'question-actions';
+              
+              const favBtn = document.createElement('button');
+              favBtn.className = 'fav-btn';
+              favBtn.textContent = '☆';
+              favBtn.setAttribute('data-question-id', row.id);
+              
+              const subject = state.selectedSubject || 'عام';
+              const isFavorited = state.favorites[subject] && state.favorites[subject].includes(row.id);
+              if (isFavorited) favBtn.classList.add('favorited');
+              
+              favBtn.onclick = () => toggleFavorite(row.id);
+
+              let sourceText = '';
+              if (state.currentGroupingKey === 'course_title') {
+                  sourceText = row.lecture_name || 'محاضرة غير محددة';
+              } else if (state.currentGroupingKey === 'lecture_name') {
+                  sourceText = row.course_title || 'عنوان غير محدد';
+              } else {
+                  sourceText = row.lecture_name || row.course_title || 'مصدر';
+              }
+              const sourceBtn = document.createElement('button');
+              sourceBtn.className = 'source-btn-inline';
+              sourceBtn.textContent = sourceText;
+
+              actionsDiv.appendChild(sourceBtn);
+
+              if (row.explanation) {
+                  const explainBtn = document.createElement('button');
+                  explainBtn.className = 'explain-btn-inline';
+                  explainBtn.textContent = '❕';
+                  explainBtn.onclick = () => { playSound('click'); showExplanationModal(row.explanation); };
+                  actionsDiv.appendChild(explainBtn);
+              }
+
+              const noteBtn = document.createElement('button');
+              noteBtn.className = 'note-btn-inline';
+              noteBtn.textContent = '🖊️';
+              noteBtn.setAttribute('data-question-id', row.id);
+              if (userNotes.has(row.id)) {
+                  noteBtn.classList.add('has-note');
+              }
+              
+              noteBtn.onclick = () => {
+                  playSound('click');
+                  const noteText = userNotes.get(row.id);
+                  if (noteText) {
+                      showViewNoteModal(row.id, noteText);
+                  } else {
+                      showNoteModal(row.id, false);
+                  }
+              };
+              
+              actionsDiv.appendChild(noteBtn);
+
+              actionsDiv.appendChild(favBtn);
+              
+              wrapper.appendChild(actionsDiv);
+              questionsListContainer.appendChild(wrapper);
+          });
+      }
+
+      function checkAnswer(btn, qId, chosenIndex, correctIndex) {
+          if (btn.disabled) return;
+          const isCorrect = chosenIndex === correctIndex;
+          const answersDiv = btn.parentElement;
+          Array.from(answersDiv.children).forEach((b, idx) => {
+              b.disabled = true;
+              if (idx === correctIndex) b.classList.add('correct');
+          });
+          if (!isCorrect) {
+              btn.classList.add('wrong');
+          }
+          if (!answeredQuestions.has(qId)) {
+              stats.solved++;
+              if (isCorrect) {
+                  stats.correct++;
+                  playSound('correct');
+              } else {
+                  stats.wrong++;
+                  playSound('wrong');
+              }
+              answeredQuestions.set(qId, { chosenIndex, isCorrect });
+              saveAnswers();
+          }
+      }
+
+      function solveAllQuestions() {
+          playSound('click');
+          if (!state.currentList.length) { return; }
+          state.currentList.forEach(row => {
+              const wrapper = questionsListContainer.querySelector(`[data-question-id="${row.id}"]`); if (!wrapper) return;
+              const answers = wrapper.querySelectorAll('.answers button');
+              if (answers.length > 0) {
+                   const correctIdx = row.correct_answer ? (parseInt(row.correct_answer.replace('choice_', '')) - 1) : -1;
+                  if (correctIdx > -1 && !answeredQuestions.has(row.id)) {
+                       checkAnswer(answers[correctIdx], row.id, correctIdx, correctIdx);
+                  }
+              }
+          });
+          saveAnswers();
+          toggleFloatingMenu(false);
+      }
+
+      function resetAllAnswers(silent = false) {
+          if (!silent) playSound('click');
+          if (!state.currentList.length && !silent) { toggleFloatingMenu(false); return; }
+          
+          if (!silent) {
+              state.currentList.forEach(row => {
+                  answeredQuestions.delete(row.id);
+              });
+              saveAnswers();
+              stats = { solved: 0, correct: 0, wrong: 0 };
+          } else {
+              stats = { solved: 0, correct: 0, wrong: 0 };
+              state.currentList.forEach(row => {
+                  if (answeredQuestions.has(row.id)) {
+                      stats.solved++;
+                      if (answeredQuestions.get(row.id).isCorrect) stats.correct++;
+                      else stats.wrong++;
+                  }
+              });
+          }
+          
+          renderAllQuestions();
+          if (!silent) { toggleFloatingMenu(false); }
+      }
+
+      function formatTime(seconds) {
+          const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+          const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+          const s = (seconds % 60).toString().padStart(2, '0');
+          return `${h}:${m}:${s}`;
+      }
+
+      function updateTimerDisplay() {
+          const el = document.getElementById('timer-display');
+          if (el) el.textContent = formatTime(timerSeconds);
+      }
+
+      function toggleTimer() {
+          playSound('click');
+          const btn = document.getElementById('timer-toggle-btn');
+          if (!btn) return;
+          if (isTimerRunning) {
+              clearInterval(timerInterval);
+              isTimerRunning = false;
+              btn.textContent = '▶️ تشغيل المؤقت';
+              btn.style.transform = 'scale(1)';
+          } else {
+              timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+              isTimerRunning = true;
+              btn.textContent = '⏸️ إيقاف المؤقت';
+              btn.style.transform = 'scale(1.02)';
+          }
+      }
+      
+      function goHome() {
+          playSound('click');
+          toggleFloatingMenu(false, false);
+          
+          const isCollegeScreen = document.getElementById('college-screen').classList.contains('active');
+          const collegesListContainer = document.getElementById('collegesListContainer');
+
+          if (isCollegeScreen && collegesListContainer.style.display === 'none') {
+              toggleCollegesList(true);
+          } else {
+              showScreen('college-screen', false);
+              history.replaceState({ screen: 'college-screen', nav: ['college-screen'] }, '', '#college-screen');
+              loadMainScreen();
+          }
+          updateTelegramBackButton();
+      }
+
+      function toggleAppearanceMenu() {
+         isSettingsCollapsed = !isSettingsCollapsed;
+         renderFloatingMenu(); // Re-render to show change
+      }
+
+      function renderFloatingMenu() {
+        const container = document.getElementById('floating-menu-container');
+        const isQuestionScreen = document.getElementById('question-screen').classList.contains('active');
+        const isDark = document.body.classList.contains('dark-mode');
+
+        // SVG Icons
+        const themeIcon = isDark ? `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>` : `<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const telegramIcon = `<svg viewBox="0 0 24 24"><path d="M22 2L11 13" stroke-width="2"></path><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke-width="2"></path></svg>`;
+        const fontIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>`; // Type icon
+        const inkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>`; // Contrast Icon
+        const sizeUpIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M3 12h18"/></svg>`; // Plus roughly for concept combined with 'A' text in logic? using generic icons to fit strict svg request. I will use generic '+' '-' combined with text. 
+        // Better yet: Pure SVGs representing size
+        const textIncreaseIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20v-5h3v5H4zm5-9v9h3v-9H9zm5-9v18h3V2h-3zm5 5v13h3V7h-3z"/></svg>`; // Just a growing bar chart like
+        const textDecreaseIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20v-5h-3v5h3zm-5-9v9h-3v-9h3zm-5-9v18h-3V2h3zm-5 5v13h-3V7h3z"/></svg>`; // Descending? 
+        
+        // Simpler Font Size Icons - Modified to Plus and Minus
+        const fontBigger = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`; // Plus Icon
+        const fontSmaller = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`; // Minus Icon
+
+        // Prepare the basic buttons
+        const basicButtons = `
+            <button class="menu-icon-btn" onclick="toggleTheme()" title="تبديل الوضع">${themeIcon}</button>
+            <a href="https://t.me/NEOMplatform" target="_blank" class="menu-icon-btn" title="قناتنا على تلغرام">${telegramIcon}</a>
+        `;
+
+        let appearanceHTML = '';
+        if (isQuestionScreen) {
+             appearanceHTML = `
+             <button class="toggle-menu-btn" onclick="toggleAppearanceMenu()">
+                <span>إعدادات العرض</span> ${isSettingsCollapsed ? '▼' : '▲'}
+             </button>
+             <div id="appearance-controls-container" style="display: ${isSettingsCollapsed ? 'none' : 'flex'}">
+                 <div class="menu-row-control">
+                      ${basicButtons}
+                 </div>
+                 <div class="menu-row-control">
+                      <button class="menu-icon-btn" onclick="toggleFontMode()" title="تغيير الخط">${fontIcon}</button>
+                      <button class="menu-icon-btn" onclick="toggleInkMode()" title="وضع القراءة">${inkIcon}</button>
+                 </div>
+                 <div class="menu-row-control">
+                      <button class="menu-icon-btn" onclick="adjustFontSize(0.1)" title="تكبير النص">${fontBigger}</button>
+                      <button class="menu-icon-btn" onclick="adjustFontSize(-0.1)" title="تصغير النص">${fontSmaller}</button>
+                 </div>
+             </div>
+             `;
+        } else {
+             // For Home Screen, visible immediately as standard buttons
+             appearanceHTML = `
+             <div class="menu-icon-btn-group">
+                 ${basicButtons}
+             </div>
+             `;
+        }
+
+        let menuHTML = appearanceHTML;
+        
+        // Separator
+        menuHTML += `<div class="menu-group-title"></div>`;
+
+        if (isQuestionScreen) {
+            if (state.selectedClassification === 'بنوك' || state.selectedClassification === 'دورات') {
+                 menuHTML += `<button class="menu-secondary-btn" onclick="showStatsModal()" style="margin-top: 10px;">التقييم</button>`;
+            }
+            menuHTML += `<div class="timer-control-wrapper"><span id="timer-display">${formatTime(timerSeconds)}</span><button class="btn btn-primary" id="timer-toggle-btn" onclick="toggleTimer()">${isTimerRunning ? '⏸️ إيقاف المؤقت' : '▶️ تشغيل المؤقت'}</button></div>`;
+            
+            // Render buttons ONLY if not "Ideas"
+            if (['بنوك', 'دورات', 'المفضلة'].includes(state.selectedClassification)) {
+                 menuHTML += `<div style="display: flex; gap: 10px; margin-top: 10px;">
+                                <button class="menu-secondary-btn" onclick="solveAllQuestions()" style="flex: 1; margin: 0;">✅ تصحيح</button>
+                                <button class="menu-secondary-btn" onclick="resetAllAnswers()" style="flex: 1; margin: 0;">🔄 تصفير</button>
+                             </div>`;
+            }
+        }
+        menuHTML += `<p class="menu-footer-text">جميع الحقوق محفوظة</p>`;
+        container.innerHTML = menuHTML;
+      }
+
+      function toggleFloatingMenu(show, goBack = true) {
+          if (show) {
+              renderFloatingMenu();
+              showModal('floatingMenu');
+          } else {
+              hideModal('floatingMenu', goBack);
+          }
+      }
+
+      function showToast(message, type = 'default') {
+          const t = document.createElement('div'); t.className = `toast ${type}`; t.textContent = message;
+          toastContainer.appendChild(t); setTimeout(() => t.remove(), 2500);
+      }
+
+      function showSubjectStatsModal(subject, stats) {
+          document.getElementById('subjectStatsTitle').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-solid)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align: -4px; margin-left: 8px;"><path d="M3 3v18h18"></path><polyline points="7 14 11 10 15 14 19 10"></polyline></svg> ${subject}`;
+          document.getElementById('subjectStatsDetails').innerHTML = `<div class="stat-detail-row"><span>البنوك</span><span class="stat-detail-value">${stats.banks}</span></div><div class="stat-detail-row"><span>الدورات</span><span class="stat-detail-value">${stats.courses}</span></div><div class="stat-detail-row"><span>الأفكار</span><span class="stat-detail-value">${stats.ideas}</span></div>`;
+          showModal('subjectStatsModal');
+      }
+      function hideSubjectStatsModal() { 
+          hideModal('subjectStatsModal');
+      }
+
+      function showStatsModal() {
+          playSound('click');
+          toggleFloatingMenu(false, false);
+          showModal('statsModal', true); 
+          document.getElementById('solvedCount').textContent = stats.solved;
+          document.getElementById('correctCount').textContent = stats.correct;
+          document.getElementById('wrongCount').textContent = stats.wrong;
+          const percentage = stats.solved > 0 ? Math.round((stats.correct / stats.solved) * 100) : 0;
+          document.getElementById('percentageText').textContent = `${percentage}%`;
+          document.getElementById('statCircle').style.setProperty('--percentage', percentage);
+      }
+      function hideStatsModal() { 
+          hideModal('statsModal');
+      }
+
+      function toggleTheme() {
+          playSound('click');
+          document.body.classList.toggle('dark-mode');
+          localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+          renderFloatingMenu();
+      }
+
+      function showExplanationModal(text) {
+          document.getElementById('modal-explanation-text').innerHTML = renderContentWithFeatures(text);
+          showModal('explanation-modal');
+      }
+      function hideExplanationModal() { 
+          hideModal('explanation-modal');
+      }
+
+      const noteModal = document.getElementById('note-modal');
+      const noteTextarea = document.getElementById('note-textarea');
+      
+      function showNoteModal(questionId, replace = false) {
+          const noteText = userNotes.get(questionId) || '';
+          noteTextarea.value = noteText;
+          noteModal.setAttribute('data-current-question-id', questionId);
+          showModal('note-modal', replace);
+          noteTextarea.focus();
+      }
+
+      function hideNoteModal() {
+          hideModal('note-modal');
+          noteTextarea.value = '';
+          noteModal.removeAttribute('data-current-question-id');
+      }
+
+      function saveNoteAndClose() {
+          const questionId = noteModal.getAttribute('data-current-question-id');
+          if (!questionId) return;
+
+          const noteText = noteTextarea.value.trim();
+          const noteBtn = document.querySelector(`.note-btn-inline[data-question-id="${questionId}"]`);
+
+          if (noteText) {
+              userNotes.set(questionId, noteText);
+              if (noteBtn) noteBtn.classList.add('has-note');
+          } else {
+              userNotes.delete(questionId);
+              if (noteBtn) noteBtn.classList.remove('has-note');
+          }
+
+          saveNotes();
+          hideNoteModal();
+      }
+
+      function showViewNoteModal(questionId, noteText) {
+          document.getElementById('view-note-text').innerHTML = renderContentWithFeatures(noteText);
+          
+          document.getElementById('edit-note-btn').onclick = () => {
+              playSound('click');
+              hideModal('view-note-modal', false);
+              showNoteModal(questionId, true);
+          };
+          
+          document.getElementById('delete-note-btn').onclick = () => {
+              playSound('click');
+              deleteNote(questionId);
+              hideModal('view-note-modal');
+          };
+
+          showModal('view-note-modal');
+      }
+
+      function deleteNote(questionId) {
+          if (userNotes.has(questionId)) {
+              userNotes.delete(questionId);
+              saveNotes();
+
+              const noteBtn = document.querySelector(`.note-btn-inline[data-question-id="${questionId}"]`);
+              if (noteBtn) {
+                  noteBtn.classList.remove('has-note');
+              }
+              
+              showToast('تم حذف الملاحظة', 'success');
+          }
+      }
+
+      function unsubscribeFromChanges() {
+          if (realtimeChannel) { supabase.removeChannel(realtimeChannel); realtimeChannel = null; }
+      }
+      
+      async function refreshContent(college, year, silent = false) {
+          if (!supabase) { return false; }
+
+          if (!college || !year) {
+               return false;
+          }
+
+          try {
+              const { data, error } = await supabase.rpc('rpc_get_year_content', { 
+                  p_college: college, 
+                  p_year: year, 
+                  p_device_fp: state.device_fp 
+              });
+              if (error) throw error;
+
+              if (data && data.content) {
+                  const key = `content_${college}_${year}`;
+                  const contentToStore = JSON.stringify({ device_fp: state.device_fp, content: data.content });
+                  localStorage.setItem(key, contentToStore);
+                  
+                  if (!silent) showToast('تم تحديث المحتوى بنجاح!', 'success');
+                  
+                  if (college === state.selectedCollege && year === state.selectedYear) {
+                       state.currentContent = data.content;
+                       renderSubjects(true);
+                       
+                       if (document.getElementById('list-view-screen').classList.contains('active')) {
+                           showGroupedList(state.selectedClassification, true);
+                       } else if (document.getElementById('question-screen').classList.contains('active')) {
+                           if (state.selectedClassification === 'المفضلة') {
+                               showFavorites(true);
+                           } else {
+                               showGroupedList(state.selectedClassification, true);
+                           }
+                       }
+                  }
+                  return true;
+              }
+              return false;
+          } catch (e) {
+               console.error(`Failed to refresh ${college}-${year}:`, e);
+               return false;
+          }
+      }
+
+      async function handleGlobalRefresh() {
+          if (!navigator.onLine) {
+              showToast('لا يوجد اتصال بالإنترنت للتحديث.', 'warning');
+              return;
+          }
+          if (!supabase) {
+              showToast('خطأ في الاتصال، لا يمكن التحديث.', 'danger');
+              return;
+          }
+
+          playSound('click');
+          let onlineSuccess = false;
+          let localSuccessCount = 0;
+          
+          try {
+              await loadMainScreen(true);
+              onlineSuccess = true;
+          } catch (e) {
+              console.error("Failed to refresh college list:", e);
+          }
+
+          const downloaded = JSON.parse(localStorage.getItem('downloadedContent') || '[]');
+          if (downloaded.length > 0) {
+              const updatePromises = downloaded.map(item => refreshContent(item.college, item.year, true));
+              const results = await Promise.all(updatePromises);
+              localSuccessCount = results.filter(Boolean).length;
+          }
+          
+          await loadMainScreen();
+
+          if (onlineSuccess || localSuccessCount > 0) {
+               showToast('تم التحديث بنجاح', 'success');
+          }
+      }
+
+      function subscribeToContentChanges(college, year) {
+          if (!supabase) { return; }
+
+          unsubscribeFromChanges();
+          
+          const cacheKey = `content_${college}_${year}`;
+          const isDownloaded = localStorage.getItem(cacheKey) !== null;
+
+          realtimeChannel = supabase.channel(`public:content_bank:college=eq.${college}`)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'content_bank', filter: `college=eq.${college}`},
+              async (payload) => { 
+                  if (payload.new?.year === year || (payload.old?.id && state.currentContent.some(item => item.id === payload.old.id))) {
+                      
+                      if (isDownloaded) {
+                          await refreshContent(college, year, false);
+                      } else {
+                          await chooseYear(year, true);
+
+                      }
+                  }
+              }
+            ).subscribe();
+      }
+
+      (async function initApp(){
+        showScreen('college-screen', false);
+
+        if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+        loadAppearanceSettings(); // Initialize appearance first
+        
+        state.device_fp = await getDeviceFingerprint();
+        loadFavorites();
+        loadNotes();
+        loadSavedAnswers();
+        loadStudiedItems();
+
+        floatingMenuBtn.addEventListener('click', () => toggleFloatingMenu(true));
+        
+        floatingMenu.addEventListener('click', (e) => { if(e.target === floatingMenu) hideModal('floatingMenu'); });
+        statsModal.addEventListener('click', (e) => { if (e.target === statsModal) hideModal('statsModal'); });
+        subjectStatsModal.addEventListener('click', (e) => { if (e.target === subjectStatsModal) hideModal('subjectStatsModal'); });
+        explanationModal.addEventListener('click', (e) => { if (e.target === explanationModal) hideModal('explanation-modal'); });
+        
+        document.getElementById('note-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'note-modal') hideModal('note-modal');
+        });
+        document.getElementById('save-note-btn').addEventListener('click', saveNoteAndClose);
+
+        document.getElementById('view-note-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'view-note-modal') hideModal('view-note-modal');
+        });
+
+        document.getElementById('year-choice-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'year-choice-modal') hideModal('year-choice-modal');
+        });
+        document.getElementById('codeModal').addEventListener('click', (e) => {
+            if (e.target.id === 'codeModal') closeCodeModal();
+        });
+
+        const collegeScreen = document.getElementById('college-screen');
+        const collegeCard = document.getElementById('college-screen-card');
+        const ptrLoader = document.getElementById('ptr-loader');
+        let startY = 0;
+        let pullDistance = 0;
+        let isRefreshing = false;
+        const pullThreshold = 70;
+        
+        collegeScreen.addEventListener('touchstart', (e) => {
+            if (isRefreshing || collegeCard.scrollTop !== 0) return;
+            if (!navigator.onLine) return;
+            startY = e.touches[0].pageY;
+        }, { passive: true });
+
+        collegeScreen.addEventListener('touchmove', (e) => {
+            if (isRefreshing || !navigator.onLine) return;
+            
+            const currentY = e.touches[0].pageY;
+            pullDistance = currentY - startY;
+
+            if (pullDistance > 0 && collegeCard.scrollTop === 0) {
+                e.preventDefault();
+                const moveDistance = Math.min(pullDistance, pullThreshold + 20);
+                const pullRatio = Math.min(pullDistance / pullThreshold, 1);
+
+                ptrLoader.classList.add('visible');
+                ptrLoader.style.transform = `translateY(${moveDistance - 70}px)`;
+                ptrLoader.querySelector('.spinner').style.opacity = pullRatio;
+                ptrLoader.querySelector('.spinner').style.transform = `rotate(${pullRatio * 360}deg)`;
+                
+                collegeScreen.classList.add('ptr-down');
+                collegeCard.style.transform = `translateY(${moveDistance}px)`;
+
+            } else if (pullDistance < 0) {
+                startY = currentY; 
+            }
+        }, { passive: false });
+
+        collegeScreen.addEventListener('touchend', async (e) => {
+            if (isRefreshing || !navigator.onLine) return;
+
+            collegeCard.style.transform = 'translateY(0)';
+            collegeScreen.classList.remove('ptr-down');
+
+            if (pullDistance > pullThreshold && collegeCard.scrollTop === 0) {
+                isRefreshing = true;
+                ptrLoader.classList.add('refreshing');
+                ptrLoader.style.transform = 'translateY(0)';
+                ptrLoader.querySelector('.spinner').style.transform = 'none';
+
+                try {
+                    await handleGlobalRefresh();
+                } catch (err) {
+                    console.error("Refresh failed:", err);
+                }
+                
+                isRefreshing = false;
+                ptrLoader.classList.remove('refreshing');
+                ptrLoader.classList.remove('visible');
+                ptrLoader.style.transform = 'translateY(-70px)';
+            } else {
+                ptrLoader.classList.remove('visible');
+                ptrLoader.style.transform = 'translateY(-70px)';
+            }
+            
+            pullDistance = 0;
+            startY = 0;
+        }, { passive: true });
+
+        navigationHistory.push('college-screen');
+        history.replaceState({ screen: 'college-screen', nav: ['college-screen'] }, '', '#college-screen');
+        await loadMainScreen();
+        window.addEventListener('beforeunload', saveScrollPosition);
+
+        // Export globals for inline HTML event handlers
+        window.toggleTheme = toggleTheme;
+        window.showStatsModal = showStatsModal;
+        window.solveAllQuestions = solveAllQuestions;
+        window.resetAllAnswers = resetAllAnswers;
+        window.toggleTimer = toggleTimer;
+        window.toggleFloatingMenu = toggleFloatingMenu;
+        window.toggleCollegesList = toggleCollegesList;
+        window.goHome = goHome;
+        window.hideModal = hideModal;
+        window.hideNoteModal = hideNoteModal;
+        window.closeCodeModal = closeCodeModal;
+        
+        // Export New Functions
+        window.toggleFontMode = toggleFontMode;
+        window.toggleInkMode = toggleInkMode;
+        window.adjustFontSize = adjustFontSize;
+        window.toggleAppearanceMenu = toggleAppearanceMenu;
+        
+        updateTelegramBackButton();
+      })();
+    }
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
